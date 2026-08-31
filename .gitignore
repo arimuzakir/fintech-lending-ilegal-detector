@@ -1,0 +1,23 @@
+# Model weights (sudah dihosting di Hugging Face: muzakir17/indobert-fintech-lending-ilegal)
+model/model.safetensors
+
+# Cookies & Akun sensitif
+cookies_facebook.txt
+cookies_x.txt
+
+# Dokumen & Berkas Besar
+*.pdf
+output_evaluasi/
+
+# Python cache & virtual environment
+__pycache__/
+*.py[cod]
+*$py.class
+.env
+.venv
+env/
+venv/
+
+# Editor
+.vscode/
+.idea/
