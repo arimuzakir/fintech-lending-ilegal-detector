@@ -24,6 +24,7 @@ Aplikasi deteksi terdistribusi secara publik dan dapat diakses melalui tautan be
 
 ```text
 ├── api/             # Vercel Serverless Function entrypoint
+├── notebooks/       # Google Colab Jupyter Notebook pelatihan & evaluasi model
 ├── services/        # Engine inferensi IndoBERT dan parser dokumen
 ├── static/          # Antarmuka web pengguna dan ekstensi Chrome scraper
 ├── public/          # Distribusi aset statis Edge CDN
