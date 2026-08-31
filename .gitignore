@@ -4,10 +4,15 @@ model/model.safetensors
 # Cookies & Akun sensitif
 cookies_facebook.txt
 cookies_x.txt
+cookies_*.txt
 
-# Dokumen & Berkas Besar
+# Dokumen & Riset Internal
 *.pdf
 output_evaluasi/
+CATATAN_SESI_DAN_LOG_KERJA.md
+AGENTS.md
+GEMINI.md
+.agents/
 
 # Python cache & virtual environment
 __pycache__/
@@ -18,6 +23,7 @@ __pycache__/
 env/
 venv/
 
-# Editor
+# Editor & Antigravity IDE
 .vscode/
 .idea/
+.gemini/
