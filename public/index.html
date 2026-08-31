@@ -12,6 +12,13 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+  if (window.pdfjsLib) {
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  }
+</script>
 
 <style>
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -2218,6 +2225,63 @@ async function batchAnalyzeWithProgress(sentences, startPct, endPct, modelType) 
   return results;
 }
 
+// ─── Client-side Document Extractors (Zero Payload Limit) ────────────────────
+async function extractClientPDF(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  let fullText = '';
+  const numPages = Math.min(pdf.numPages, 100);
+  for (let i = 1; i <= numPages; i++) {
+    const page = await pdf.getPage(i);
+    const textContent = await page.getTextContent();
+    const pageText = textContent.items.map(item => item.str).join(' ');
+    fullText += pageText + '\n';
+  }
+  return splitTextIntoCleanSentences(fullText);
+}
+
+async function extractClientExcel(file) {
+  const arrayBuffer = await file.arrayBuffer();
+  const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+  let fullText = '';
+  workbook.SheetNames.forEach(name => {
+    const sheet = workbook.Sheets[name];
+    const csv = XLSX.utils.sheet_to_csv(sheet);
+    fullText += csv + '\n';
+  });
+  return splitTextIntoCleanSentences(fullText);
+}
+
+async function extractClientTxt(file) {
+  const text = await file.text();
+  return splitTextIntoCleanSentences(text);
+}
+
+function splitTextIntoCleanSentences(raw) {
+  if (!raw) return [];
+  const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(l => l.length >= 15);
+  const sentences = [];
+  lines.forEach(line => {
+    const parts = line.split(/(?<=[.!?])\s+/);
+    parts.forEach(p => {
+      const clean = p.trim().replace(/\s+/g, ' ');
+      if (clean.length >= 15 && clean.length <= 1500) {
+        sentences.push(clean);
+      }
+    });
+  });
+  const seen = new Set();
+  const unique = [];
+  for (const s of sentences) {
+    const key = s.slice(0, 50).toLowerCase().replace(/\W+/g, '');
+    if (key && !seen.has(key)) {
+      seen.add(key);
+      unique.push(s);
+    }
+  }
+  return unique.slice(0, 1000);
+}
+
 // ─── Document Analysis Flow ───────────────────────────────────────────────────
 async function runDocumentAnalysis() {
   if (!selectedFile) return;
@@ -2229,28 +2293,50 @@ async function runDocumentAnalysis() {
 
   showProgress();
   setStep(1);
-  setProgress(5, 'Mengunggah & Mengekstrak Dokumen...', `Membaca struktur isi ${selectedFile.name}...`, '');
+  setProgress(5, 'Mengekstrak Struktur Dokumen...', `Membaca isi ${selectedFile.name}...`, '');
 
   try {
-    const formData = new FormData();
-    formData.append('file', selectedFile);
-    const r1 = await fetch('/api/upload-document', { method: 'POST', body: formData });
-    if (!r1.ok) { const e = await r1.json(); throw new Error(e.detail || 'Upload gagal'); }
-    const extracted = await r1.json();
+    let extractedSentences = [];
+    const ext = (selectedFile.name.split('.').pop() || '').toLowerCase();
 
-    if (!extracted.sentences || extracted.sentences.length === 0) {
-      throw new Error('Tidak ada baris teks bermakna yang dapat diekstrak.');
+    // 1. Ekstraksi Langsung di Browser (Client-Side, Cepat & Bebas Batas Payload Server)
+    if (ext === 'pdf' && window.pdfjsLib) {
+      setProgress(10, 'Mengekstrak Halaman PDF...', `Membaca teks dari file ${selectedFile.name}...`, '');
+      extractedSentences = await extractClientPDF(selectedFile);
+    } else if (['xlsx', 'xls', 'csv'].includes(ext) && window.XLSX) {
+      setProgress(10, 'Mengekstrak Tabel Spreadsheet...', `Membaca baris data ${selectedFile.name}...`, '');
+      extractedSentences = await extractClientExcel(selectedFile);
+    } else if (['txt', 'log'].includes(ext)) {
+      setProgress(10, 'Membaca Teks Dokumen...', `Mem-parse kalimat ${selectedFile.name}...`, '');
+      extractedSentences = await extractClientTxt(selectedFile);
+    } else {
+      // Fallback ke server upload jika format khusus
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      const r1 = await fetch('/api/upload-document', { method: 'POST', body: formData });
+      if (!r1.ok) {
+        let errDetail = 'Upload gagal';
+        try { const e = await r1.json(); errDetail = e.detail || errDetail; }
+        catch { errDetail = await r1.text(); }
+        throw new Error(errDetail);
+      }
+      const extracted = await r1.json();
+      extractedSentences = extracted.sentences || [];
+    }
+
+    if (!extractedSentences || extractedSentences.length === 0) {
+      throw new Error('Tidak ada baris teks bermakna yang dapat diekstrak dari dokumen ini.');
     }
 
     setStep(2);
     setProgress(20, 'Segmentasi Kalimat Selesai',
-      `Berhasil mengekstrak ${extracted.total} baris teks dari file.`,
-      `Tipe: ${extracted.source_type.toUpperCase()} | Total: ${extracted.total} teks`
+      `Berhasil mengekstrak ${extractedSentences.length} baris teks dari file.`,
+      `Tipe: ${ext.toUpperCase()} | Total: ${extractedSentences.length} kalimat`
     );
     await delay(350);
 
     setStep(3);
-    allResults = await batchAnalyzeWithProgress(extracted.sentences, 25, 92, modelType);
+    allResults = await batchAnalyzeWithProgress(extractedSentences, 25, 92, modelType);
 
     setStep(4);
     setProgress(96, 'Merender Visualisasi Grafik...', 'Menghitung distribusi klasifikasi...', '');
