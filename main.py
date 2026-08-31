@@ -58,19 +58,31 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 static_dir  = os.path.join(current_dir, "static")
 output_dir  = os.path.join(current_dir, "output_evaluasi")
 ext_dir     = os.path.join(static_dir, "extension")
-os.makedirs(static_dir, exist_ok=True)
-os.makedirs(output_dir, exist_ok=True)
-
-# Mount static — guard against missing dirs on Vercel serverless
-try:
-    app.mount("/static", StaticFiles(directory=static_dir), name="static")
-except Exception as _e:
-    print(f"[Startup] Warning: /static mount skipped — {_e}")
 
 try:
-    app.mount("/output_evaluasi", StaticFiles(directory=output_dir), name="output_evaluasi")
+    if not os.path.exists(static_dir):
+        os.makedirs(static_dir, exist_ok=True)
+except Exception:
+    pass
+
+try:
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir, exist_ok=True)
+except Exception:
+    pass
+
+# Mount static — guard against read-only filesystem or missing dirs on Vercel
+try:
+    if os.path.exists(static_dir):
+        app.mount("/static", StaticFiles(directory=static_dir), name="static")
 except Exception as _e:
-    print(f"[Startup] Warning: /output_evaluasi mount skipped — {_e}")
+    print(f"[Startup] Note: /static mount skipped — {_e}")
+
+try:
+    if os.path.exists(output_dir):
+        app.mount("/output_evaluasi", StaticFiles(directory=output_dir), name="output_evaluasi")
+except Exception as _e:
+    print(f"[Startup] Note: /output_evaluasi mount skipped — {_e}")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # SCHEMAS
