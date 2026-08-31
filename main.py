@@ -61,8 +61,16 @@ ext_dir     = os.path.join(static_dir, "extension")
 os.makedirs(static_dir, exist_ok=True)
 os.makedirs(output_dir, exist_ok=True)
 
-app.mount("/static",           StaticFiles(directory=static_dir), name="static")
-app.mount("/output_evaluasi",  StaticFiles(directory=output_dir),  name="output_evaluasi")
+# Mount static — guard against missing dirs on Vercel serverless
+try:
+    app.mount("/static", StaticFiles(directory=static_dir), name="static")
+except Exception as _e:
+    print(f"[Startup] Warning: /static mount skipped — {_e}")
+
+try:
+    app.mount("/output_evaluasi", StaticFiles(directory=output_dir), name="output_evaluasi")
+except Exception as _e:
+    print(f"[Startup] Warning: /output_evaluasi mount skipped — {_e}")
 
 # ──────────────────────────────────────────────────────────────────────────────
 # SCHEMAS
