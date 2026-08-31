@@ -537,6 +537,51 @@ body {
   margin-bottom: 16px;
 }
 
+.model-eval-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  background: var(--bg-subtle);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.model-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: 99px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.model-pill-btn:hover {
+  background: var(--navy-50);
+  color: var(--navy-800);
+  border-color: var(--navy-100);
+}
+
+.model-pill-btn.active {
+  background: var(--navy-800);
+  color: #ffffff;
+  border-color: var(--navy-800);
+  box-shadow: 0 2px 6px rgba(30, 58, 138, 0.25);
+}
+
+.model-pill-btn.active i {
+  color: #ffffff !important;
+}
+
 .card-heading-title {
   display: flex;
   align-items: center;
@@ -1725,6 +1770,30 @@ body {
         <span class="format-tag">Evaluasi Komparatif</span>
       </div>
 
+      <!-- Toolbar Pemilihan Model Evaluasi -->
+      <div class="model-eval-toolbar">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span style="font-weight:800;font-size:0.85rem;color:var(--navy-900);">
+            <i class="fa-solid fa-sliders" style="color:var(--gold-600);margin-right:4px;"></i> Pilihan Model Evaluasi:
+          </span>
+          <select id="eval-model-select" onchange="selectEvaluationModel(this.value)" style="padding:7px 14px;border-radius:8px;border:1.5px solid var(--border-light);font-weight:700;font-size:0.85rem;background:#ffffff;color:var(--navy-900);outline:none;cursor:pointer;box-shadow:var(--shadow-sm);">
+            <option value="indobert" selected>👑 IndoBERT (indobenchmark/indobert-base-p2) — Utama (96.60%)</option>
+            <option value="bert_multilingual">🌐 BERT Multilingual (google-bert/bert-base-multilingual-cased) — (96.53%)</option>
+            <option value="indobert_tweet">💬 IndoBERT-Tweet (indolem/indobertweet-base-uncased) — (95.67%)</option>
+            <option value="tfidf_logreg">📊 TF-IDF + Logistic Regression (Baseline) — (91.53%)</option>
+            <option value="all_comparison">⚖️ Komparasi Apel-ke-Apel (Semua 4 Model Sekaligus)</option>
+          </select>
+        </div>
+
+        <div class="eval-pill-group" style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button type="button" class="model-pill-btn active" id="pill-indobert" onclick="selectEvaluationModel('indobert', this)"><i class="fa-solid fa-crown" style="color:var(--gold-600);"></i> IndoBERT</button>
+          <button type="button" class="model-pill-btn" id="pill-bert_multi" onclick="selectEvaluationModel('bert_multilingual', this)"><i class="fa-solid fa-globe"></i> BERT-Multi</button>
+          <button type="button" class="model-pill-btn" id="pill-indobert_tweet" onclick="selectEvaluationModel('indobert_tweet', this)"><i class="fa-solid fa-comments"></i> IndoBERT-Tweet</button>
+          <button type="button" class="model-pill-btn" id="pill-tfidf" onclick="selectEvaluationModel('tfidf_logreg', this)"><i class="fa-solid fa-chart-line"></i> TF-IDF</button>
+          <button type="button" class="model-pill-btn" id="pill-all" onclick="selectEvaluationModel('all_comparison', this)"><i class="fa-solid fa-scale-balanced"></i> Komparasi Semua</button>
+        </div>
+      </div>
+
         <!-- Specific Model Spec Card -->
         <div class="eval-spec-card" id="eval-spec-card">
           <div class="eval-spec-title" id="eval-spec-name">
@@ -2777,7 +2846,25 @@ function renderCurrentTablePage() {
 // ─── TAB 3: MODEL EVALUATION BAR CHARTS CONTROLLER ────────────────────────────
 function selectEvaluationModel(modelKey, btn) {
   document.querySelectorAll('.model-pill-btn').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
+  if (btn) {
+    btn.classList.add('active');
+  } else {
+    const pillMap = {
+      'indobert': 'pill-indobert',
+      'bert_multilingual': 'pill-bert_multi',
+      'indobert_tweet': 'pill-indobert_tweet',
+      'tfidf_logreg': 'pill-tfidf',
+      'all_comparison': 'pill-all'
+    };
+    const pillId = pillMap[modelKey];
+    if (pillId && document.getElementById(pillId)) {
+      document.getElementById(pillId).classList.add('active');
+    }
+  }
+  const select = document.getElementById('eval-model-select');
+  if (select && select.value !== modelKey) {
+    select.value = modelKey;
+  }
   renderEvaluationModelDashboard(modelKey);
 }
 
