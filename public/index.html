@@ -2447,11 +2447,43 @@ async function runDocumentAnalysis() {
   }
 }
 
+// ─── Sentence Splitter (WAJIB Ada – digunakan extractClientHTML) ──────────────
+function splitTextIntoCleanSentences(rawText) {
+  if (!rawText || !rawText.trim()) return [];
+
+  // Pisah berdasarkan baris baru, titik, tanda tanya, tanda seru
+  const lines = rawText
+    .replace(/[\r\n]+/g, '\n')
+    .split('\n')
+    .map(l => l.trim())
+    .filter(l => l.length >= 10);
+
+  const sentences = [];
+  const seen = new Set();
+
+  for (const line of lines) {
+    // Pecah lagi berdasarkan kalimat dalam 1 baris
+    const subSentences = line.split(/(?<=[.?!])\s+/);
+    for (const s of subSentences) {
+      const clean = s.trim();
+      if (clean.length >= 10) {
+        const key = clean.slice(0, 60).toLowerCase().replace(/\W+/g, '');
+        if (key && !seen.has(key)) {
+          seen.add(key);
+          sentences.push(clean);
+        }
+      }
+    }
+  }
+
+  return sentences;
+}
+
 // ─── Client-side HTML DOM Extractor (Ultra-Fast C++ Browser Native) ───────────
 function extractClientHTML(rawHtml) {
   if (!rawHtml || !rawHtml.trim()) return [];
-  
-  const isHtml = rawHtml.includes('<') && (rawHtml.includes('>') || rawHtml.toLowerCase().includes('<!doctype'));
+
+  const isHtml = rawHtml.includes('<') && (rawHtml.includes('>') || rawHtml.slice(0, 500).toLowerCase().includes('<!doctype'));
   if (!isHtml) {
     return splitTextIntoCleanSentences(rawHtml);
   }
@@ -2461,50 +2493,53 @@ function extractClientHTML(rawHtml) {
     const doc = parser.parseFromString(rawHtml, 'text/html');
 
     // Hapus script, style, SVG, navigasi, footer
-    const junkElements = doc.querySelectorAll('script, style, svg, noscript, iframe, template, canvas, header, footer, nav, head, meta, link');
-    junkElements.forEach(el => el.remove());
+    doc.querySelectorAll('script, style, svg, noscript, iframe, template, canvas, header, footer, nav, head, meta, link, [aria-hidden="true"]')
+       .forEach(el => el.remove());
 
-    // Target kontainer postingan media sosial & portal berita
+    // Target kontainer postingan media sosial & portal berita (urutan prioritas tinggi → rendah)
     const targetSelectors = [
-      '#fintech-accumulated-posts div',
       'div[data-testid="tweetText"]',
       'div[data-ad-preview="message"]',
       'div[data-ad-comet-preview="message"]',
-      '.itp_bodycontent p',
-      '.read__content p',
-      '.article__body p',
-      '.entry-content p',
-      '.post-content p',
-      'article p',
-      'p'
+      '#fintech-accumulated-posts',
+      '.itp_bodycontent p', '.read__content p', '.article__body p',
+      '.detail-text p', '.article-content p', '.content p',
+      '.entry-content p', '.post-content p', '.post-body p',
+      'article p', 'main p', 'section p', 'p'
     ];
 
     const extractedTexts = [];
     const seenChunks = new Set();
 
-    targetSelectors.forEach(sel => {
-      const elements = doc.querySelectorAll(sel);
-      elements.forEach(el => {
-        const txt = (el.innerText || el.textContent || '').trim();
-        if (txt.length >= 15) {
-          const key = txt.slice(0, 50).toLowerCase().replace(/\W+/g, '');
+    for (const sel of targetSelectors) {
+      doc.querySelectorAll(sel).forEach(el => {
+        const txt = (el.textContent || '').trim();
+        if (txt.length >= 10) {
+          // O(1) head sampling — anti-lock thread
+          const key = txt.slice(0, 60).toLowerCase().replace(/\W+/g, '');
           if (key && !seenChunks.has(key)) {
             seenChunks.add(key);
             extractedTexts.push(txt);
           }
         }
       });
-    });
-
-    if (extractedTexts.length > 0) {
-      return splitTextIntoCleanSentences(extractedTexts.join('\n\n'));
+      if (extractedTexts.length >= 300) break; // Cukup, hentikan pencarian
     }
 
-    const bodyText = doc.body ? (doc.body.innerText || doc.body.textContent || '') : '';
+    if (extractedTexts.length > 0) {
+      return splitTextIntoCleanSentences(extractedTexts.join('\n'));
+    }
+
+    // Fallback: ambil seluruh teks body
+    const bodyText = doc.body ? (doc.body.textContent || '') : '';
     return splitTextIntoCleanSentences(bodyText);
 
   } catch (err) {
-    const cleanPlain = rawHtml.replace(/<[^>]+>/g, ' ');
+    console.warn('[extractClientHTML] error:', err);
+    // Hapus tag HTML secara manual
+    const cleanPlain = rawHtml.replace(/<script[\s\S]*?<\/script>/gi, '')
+                               .replace(/<style[\s\S]*?<\/style>/gi, '')
+                               .replace(/<[^>]+>/g, ' ');
     return splitTextIntoCleanSentences(cleanPlain);
   }
 }

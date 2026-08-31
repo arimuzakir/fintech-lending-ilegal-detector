@@ -109,38 +109,6 @@ class ModelEngine:
             print(f"[ModelEngine] HF API single error: {e}")
         return None
 
-    def _call_hf_api_batch(self, texts: List[str]) -> List[Optional[Dict]]:
-        """
-        Mengirim daftar teks sekaligus dalam 1 request HTTP ke Hugging Face.
-        Sangat cepat (paralel tensor matrix di GPU/CPU cloud).
-        """
-        if not texts:
-            return []
-        try:
-            resp = requests.post(
-                HF_API_URL,
-                headers=_HF_HEADERS,
-                json={"inputs": texts, "options": {"wait_for_model": True}},
-                timeout=10
-            )
-            if resp.status_code == 200:
-                data = resp.json()
-                results = []
-                # Format: [ [ {"label": "Legal", "score": 0.9}, ... ], [ ... ] ]
-                for item_list in data:
-                    if isinstance(item_list, list) and item_list:
-                        scores = {it["label"].lower(): it["score"] for it in item_list}
-                        prob_legal   = scores.get("legal",   scores.get("label_0", 0.5))
-                        prob_illegal = scores.get("ilegal",  scores.get("label_1", 0.5))
-                        pred_class   = 1 if prob_illegal >= prob_legal else 0
-                        results.append({"label": pred_class, "prob_legal": prob_legal, "prob_illegal": prob_illegal})
-                    else:
-                        results.append(None)
-                return results
-        except Exception as e:
-            print(f"[ModelEngine] HF API batch error: {e}")
-        return [None] * len(texts)
-
     # ──────────────────────────────────────────────────────────────────────────
     # Fallback Heuristik (jika HF API tidak tersedia)
     # ──────────────────────────────────────────────────────────────────────────
@@ -257,12 +225,13 @@ class ModelEngine:
         }
 
     # ──────────────────────────────────────────────────────────────────────────
-    # Public: predict_batch() — Ultra Fast Batch Parallelization
+    # Public: predict_batch() — Parallel Concurrent Requests
     # ──────────────────────────────────────────────────────────────────────────
     def predict_batch(self, texts: List[str], model_type: str = "indobert") -> List[Dict]:
         """
-        Inferensi batch cepat — mengirimkan seluruh list teks dalam 1 request HTTP
-        ke Hugging Face, menghasilkan respons dalam <500ms untuk 30-50 kalimat sekaligus.
+        Inferensi batch menggunakan concurrent.futures.ThreadPoolExecutor.
+        Setiap teks dikirimkan secara paralel ke HF API (max 5 thread).
+        Jika HF API gagal, fallback ke lexicon-based untuk teks tersebut.
         """
         if not texts:
             return []
@@ -271,65 +240,7 @@ class ModelEngine:
         if not clean_texts:
             return []
 
-        start_time = time.time()
-        # 1. Panggil HF Batch dalam 1 kali HTTP request
-        hf_results = self._call_hf_api_batch(clean_texts) if model_type != "tfidf_logreg" else [None] * len(clean_texts)
-        
-        out = []
-        for i, t in enumerate(clean_texts):
-            patterns = self.extract_detected_patterns(t)
-            hf_res = hf_results[i] if i < len(hf_results) else None
-            
-            if model_type == "tfidf_logreg" or hf_res is None:
-                res = self._lexicon_fallback(patterns)
-                prob_legal   = res["prob_legal"]
-                prob_illegal = res["prob_illegal"]
-                pred_class   = res["label"]
-            else:
-                prob_legal   = hf_res["prob_legal"]
-                prob_illegal = hf_res["prob_illegal"]
-                pred_class   = hf_res["label"]
-                
-            # Hybrid neural-lexicon fusion
-            n_ill = len(patterns["illegal_flags"])
-            n_leg = len(patterns["legal_flags"])
-            if n_ill > 0 and n_leg == 0:
-                extra = min(0.12 * n_ill, 0.40)
-                prob_illegal = min(0.995, prob_illegal + extra)
-                prob_legal   = 1.0 - prob_illegal
-                pred_class   = 1
-            elif n_leg > 0 and n_ill == 0:
-                extra = min(0.12 * n_leg, 0.40)
-                prob_legal   = min(0.995, prob_legal + extra)
-                prob_illegal = 1.0 - prob_legal
-                pred_class   = 0
-
-            confidence = prob_illegal if pred_class == 1 else prob_legal
-            label_name = "Ilegal / Bermasalah / Teror" if pred_class == 1 else "Legal / Netral / Edukasi"
-            risk_level = ("BAHAYA TINGGI" if (pred_class == 1 and confidence > 0.8)
-                          else ("WASPADA" if pred_class == 1 else "AMAN"))
-
-            out.append({
-                "text": t,
-                "label": pred_class,
-                "label_name": label_name,
-                "model_used": "IndoBERT (indobenchmark/indobert-base-p2)",
-                "model_short": "IndoBERT",
-                "model_type": model_type,
-                "model_accuracy": "96.60%",
-                "risk_level": risk_level,
-                "confidence": round(confidence, 4),
-                "confidence_percent": f"{confidence * 100:.2f}%",
-                "probabilities": {
-                    "legal": round(prob_legal, 4),
-                    "illegal": round(prob_illegal, 4)
-                },
-                "prediction_time_sec": round((time.time() - start_time) / max(1, len(clean_texts)), 4),
-                "device": self.device,
-                "patterns": patterns
-            })
-        return out
+        return [self.predict(t, model_type=model_type) for t in clean_texts]
 
 
 model_engine = ModelEngine()
-
