@@ -129,6 +129,7 @@ async def serve_index():
             return HTMLResponse(content=f.read())
     return HTMLResponse(content="<h2>Aplikasi Deteksi Fintech Lending Ilegal Online</h2><p>Dokumentasi API: <a href='/docs'>/docs</a></p>")
 
+@app.get("/health")
 @app.get("/api/health")
 async def health_check():
     return {
@@ -146,10 +147,12 @@ async def health_check():
         "version": "3.0.0"
     }
 
+@app.get("/samples")
 @app.get("/api/samples")
 async def get_samples():
     return {"samples": SAMPLE_CASES}
 
+@app.get("/metrics")
 @app.get("/api/metrics")
 async def get_metrics():
     return {
@@ -268,6 +271,7 @@ async def get_metrics():
 # ──────────────────────────────────────────────────────────────────────────────
 # ENDPOINTS — INFERENCE
 # ──────────────────────────────────────────────────────────────────────────────
+@app.post("/predict")
 @app.post("/api/predict")
 async def predict_single(req: TextRequest):
     try:
@@ -311,6 +315,7 @@ ALLOWED_EXTENSIONS = {
     "pdf", "xlsx", "xls", "csv", "txt", "html", "htm"
 }
 
+@app.post("/upload-document")
 @app.post("/api/upload-document")
 async def upload_document(file: UploadFile = File(...)):
     """
@@ -340,6 +345,7 @@ async def upload_document(file: UploadFile = File(...)):
 
     return result
 
+@app.post("/extract-sentences")
 @app.post("/api/extract-sentences")
 async def extract_sentences(req: SourceTextRequest):
     """
@@ -353,6 +359,7 @@ async def extract_sentences(req: SourceTextRequest):
 # ──────────────────────────────────────────────────────────────────────────────
 # ENDPOINT — DOWNLOAD CHROME EXTENSION
 # ──────────────────────────────────────────────────────────────────────────────
+@app.get("/download-extension")
 @app.get("/api/download-extension")
 async def download_extension():
     """

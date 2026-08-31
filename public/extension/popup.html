@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scraper Deteksi Fintech Lending Ilegal — Multi Platform</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  
+  body {
+    width: 430px;
+    min-height: 560px;
+    background: #ffffff;
+    color: #0f172a;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  .header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    color: #ffffff;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 3px solid #d97706;
+  }
+
+  .logo {
+    width: 34px; height: 34px;
+    background: #ffffff;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; flex-shrink: 0;
+  }
+
+  .header-text h1 { font-size: 13.5px; font-weight: 800; color: #ffffff; letter-spacing: -0.01em; }
+  .header-text p { font-size: 10.5px; color: rgba(255,255,255,0.85); margin-top: 1px; }
+
+  /* 3 Platform Switcher Tabs */
+  .platform-switcher {
+    display: flex;
+    background: #0f172a;
+    padding: 4px 10px 6px;
+    gap: 5px;
+  }
+
+  .switch-btn {
+    flex: 1;
+    padding: 6px 6px;
+    border-radius: 6px;
+    border: 1px solid rgba(255,255,255,0.15);
+    background: rgba(255,255,255,0.08);
+    color: #94a3b8;
+    font-size: 10.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    transition: all 0.18s ease;
+    white-space: nowrap;
+  }
+
+  .switch-btn:hover {
+    background: rgba(255,255,255,0.18);
+    color: #ffffff;
+  }
+
+  .switch-btn.active {
+    background: #ffffff;
+    color: #0f172a;
+    border-color: #ffffff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+  }
+
+  .switch-btn.active.fb-tab   { color: #1e40af; }
+  .switch-btn.active.x-tab    { color: #0f172a; }
+  .switch-btn.active.news-tab { color: #b45309; }
+
+  .body { padding: 12px 14px; background: #f8fafc; }
+
+  /* Platform detector card */
+  .platform-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+
+  .platform-icon {
+    width: 30px; height: 30px;
+    border-radius: 7px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
+    background: #eff6ff;
+    color: #1e40af;
+  }
+
+  .platform-info { flex: 1; min-width: 0; }
+  .platform-name { font-weight: 800; font-size: 11.5px; color: #1e3a8a; }
+  .platform-url  { font-size: 9.5px; color: #64748b; margin-top: 1px;
+                   white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .platform-badge {
+    padding: 2px 8px; border-radius: 9999px;
+    font-size: 8.5px; font-weight: 800; text-transform: uppercase;
+  }
+  .badge-fb   { background: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+  .badge-x    { background: #0f172a; color: #ffffff; border: 1px solid #0f172a; }
+  .badge-news { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+  .badge-done { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; }
+
+  /* Section cards */
+  .section-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 9px;
+    padding: 11px 12px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  /* Category pills */
+  .category-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 8px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+  }
+
+  .cat-tab {
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #475569;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+  .cat-tab:hover { background: #eff6ff; border-color: #93c5fd; color: #1e40af; }
+  .cat-tab.active { background: #1e3a8a; border-color: #1e3a8a; color: #ffffff; }
+
+  .quick-links-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    margin-bottom: 9px;
+  }
+
+  .preset-link-btn {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    padding: 7px 8px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .preset-link-btn:hover {
+    background: #1e3a8a;
+    color: #ffffff;
+    border-color: #1e3a8a;
+  }
+
+  .preset-link-btn.x-btn {
+    background: #f8fafc;
+    border-color: #cbd5e1;
+    color: #0f172a;
+  }
+
+  .preset-link-btn.x-btn:hover {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+
+  .preset-link-btn.news-btn {
+    background: #fffbeb;
+    border-color: #fde68a;
+    color: #92400e;
+  }
+
+  .preset-link-btn.news-btn:hover {
+    background: #b45309;
+    color: #ffffff;
+    border-color: #b45309;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 6px;
+  }
+
+  .search-input {
+    flex: 1;
+    padding: 7px 9px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 11px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-input:focus { border-color: #1e40af; }
+
+  .search-btn {
+    padding: 7px 12px;
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    color: #1e40af;
+    font-weight: 700;
+    font-size: 11px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .search-btn:hover { background: #1e3a8a; color: #fff; border-color: #1e3a8a; }
+
+  .btn-action-primary {
+    width: 100%;
+    padding: 11px;
+    background: #166534;
+    border: 1px solid #15803d;
+    border-radius: 8px;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.18s;
+    box-shadow: 0 2px 4px rgba(22,101,52,0.2);
+    margin-bottom: 7px;
+  }
+  .btn-action-primary:hover { background: #15803d; box-shadow: 0 3px 6px rgba(22,101,52,0.3); }
+
+  .btn-action-secondary {
+    width: 100%;
+    padding: 9px;
+    background: #1e3a8a;
+    border: none;
+    border-radius: 7px;
+    color: #ffffff;
+    font-size: 11.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    transition: all 0.18s;
+  }
+  .btn-action-secondary:hover:not(:disabled) { background: #1d4ed8; }
+  .btn-action-secondary:disabled { background: #cbd5e1; color: #64748b; cursor: not-allowed; }
+
+  /* Status box */
+  .status-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    min-height: 48px;
+  }
+  .status-text { font-size: 11px; color: #475569; line-height: 1.5; }
+  .status-count { font-size: 15px; font-weight: 900; color: #166534; margin-bottom: 2px; }
+  .status-sub   { font-size: 10.5px; color: #64748b; }
+
+  /* Preview area */
+  .preview-area {
+    max-height: 95px;
+    overflow-y: auto;
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 7px 9px;
+    font-size: 10px;
+    color: #334155;
+    font-family: monospace;
+    margin-top: 8px;
+    display: none;
+    white-space: pre-wrap;
+    line-height: 1.4;
+  }
+
+  .toast {
+    position: fixed; bottom: 14px; left: 50%; transform: translateX(-50%);
+    background: #166534; color: #fff; padding: 7px 16px;
+    border-radius: 9999px; font-size: 11px; font-weight: 700;
+    opacity: 0; transition: opacity 0.3s;
+    pointer-events: none; white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    z-index: 100;
+  }
+  .toast.show { opacity: 1; }
+
+  .spinner { width:12px; height:12px; border:2px solid rgba(255,255,255,0.4);
+    border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .panel-view { display: none; }
+  .panel-view.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">🛡️</div>
+  <div class="header-text">
+    <h1>Scraper Deteksi Fintech Ilegal</h1>
+    <p>Multi-Platform (FB, 𝕏, Berita &amp; Aduan Konsumen)</p>
+  </div>
+</div>
+
+<!-- 3 Platform Switcher Tabs -->
+<div class="platform-switcher">
+  <button class="switch-btn fb-tab active" id="tab-btn-fb">
+    <span>📘</span> Facebook
+  </button>
+  <button class="switch-btn x-tab" id="tab-btn-x">
+    <span>𝕏</span> Twitter / X
+  </button>
+  <button class="switch-btn news-tab" id="tab-btn-news">
+    <span>📰</span> Portal Berita
+  </button>
+</div>
+
+<div class="body">
+
+  <!-- Platform detector info -->
+  <div class="platform-card">
+    <div class="platform-icon" id="platform-icon">📘</div>
+    <div class="platform-info">
+      <div class="platform-name" id="platform-name">Facebook (Mendeteksi...)</div>
+      <div class="platform-url"  id="platform-url">-</div>
+    </div>
+    <div class="platform-badge badge-fb" id="platform-badge">Facebook</div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════════════════
+       PANEL 1: FACEBOOK SCRAPER
+       ═════════════════════════════════════════════════════════════════════════ -->
+  <div class="panel-view active" id="view-facebook">
+    <div class="section-card">
+      <div class="card-label">
+        <span>1. Preset Riset Postingan Facebook:</span>
+        <span style="font-size:9.5px;color:#d97706;font-weight:700;">16 Kata Kunci</span>
+      </div>
+
+      <!-- Kategori Filter Tab FB -->
+      <div class="category-tabs" id="fb-cat-tabs">
+        <button class="cat-tab active" data-cat="all">Semua</button>
+        <button class="cat-tab" data-cat="teror">🚨 Teror &amp; Data</button>
+        <button class="cat-tab" data-cat="bunga">💸 Bunga &amp; Jebakan</button>
+        <button class="cat-tab" data-cat="umpan">⚡ Umpan Kilat</button>
+        <button class="cat-tab" data-cat="korban">👥 Korban &amp; Galbay</button>
+      </div>
+
+      <!-- Dynamic Keywords Grid FB -->
+      <div class="quick-links-grid" id="fb-keywords-grid">
+        <!-- Teror & Sebar Data -->
+        <button class="preset-link-btn fb-preset-btn" data-cat="teror" data-query="pinjol sebar data">🚨 "sebar data"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="teror" data-query="teror debt collector pinjol">🚨 "teror dc"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="teror" data-query="ancam sebar kontak foto pinjol">🚨 "ancam kontak"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="teror" data-query="debt collector kasar maki nasabah">🚨 "dc kasar"</button>
+
+        <!-- Bunga & Jebakan -->
+        <button class="preset-link-btn fb-preset-btn" data-cat="bunga" data-query="bunga harian pinjol ilegal">💸 "bunga harian"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="bunga" data-query="transfer sepihak pinjol ilegal">💸 "transfer sepihak"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="bunga" data-query="dana masuk tiba tiba pinjol">💸 "dana tiba-tiba"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="bunga" data-query="tenor 7 hari bunga mencekik">💸 "tenor 7 hari"</button>
+
+        <!-- Umpan Penawaran Kilat -->
+        <button class="preset-link-btn fb-preset-btn" data-cat="umpan" data-query="pinjaman dana cair 5 menit modal ktp">⚡ "cair 5 menit"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="umpan" data-query="pinjol tanpa bi checking slik">⚡ "tanpa slik"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="umpan" data-query="pinjaman cepat tanpa verifikasi">⚡ "tanpa syarat"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="umpan" data-query="link apk pinjol ilegal wa">⚡ "link apk"</button>
+
+        <!-- Korban & Keluhan -->
+        <button class="preset-link-btn fb-preset-btn" data-cat="korban" data-query="korban pinjol ilegal penipuan">👥 "korban pinjol"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="korban" data-query="gagal bayar pinjol ilegal galbay">👥 "galbay pinjol"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="korban" data-query="pengalaman diteror pinjol ilegal">👥 "pengalaman"</button>
+        <button class="preset-link-btn fb-preset-btn" data-cat="korban" data-query="lapor satgas pasti ojk pinjol ilegal">🛡️ "lapor satgas"</button>
+      </div>
+
+      <!-- Custom Search FB -->
+      <div class="search-row">
+        <input type="text" class="search-input" id="custom-fb-query" value="pinjol sebar data" placeholder="Ketik kata kunci pencarian Facebook..." />
+        <button class="search-btn" id="btn-custom-fb-search">Buka FB</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════════════════
+       PANEL 2: TWITTER / X SCRAPER (REALTIME TWEETS & SLANG)
+       ═════════════════════════════════════════════════════════════════════════ -->
+  <div class="panel-view" id="view-twitter">
+    <div class="section-card">
+      <div class="card-label">
+        <span>1. Preset Riset Twitter / X (Live Tweet):</span>
+        <span style="font-size:9.5px;color:#0f172a;font-weight:800;background:#e2e8f0;padding:2px 6px;border-radius:4px;">16 Query Medsos</span>
+      </div>
+
+      <!-- Kategori Filter Tab X -->
+      <div class="category-tabs" id="x-cat-tabs">
+        <button class="cat-tab active" data-cat="all">Semua</button>
+        <button class="cat-tab" data-cat="teror">🚨 Teror &amp; DC</button>
+        <button class="cat-tab" data-cat="bunga">💸 Bunga &amp; Tenor</button>
+        <button class="cat-tab" data-cat="joki">⚡ Joki &amp; Data Busuk</button>
+        <button class="cat-tab" data-cat="korban">👥 Korban &amp; OJK</button>
+      </div>
+
+      <!-- Dynamic Keywords Grid X -->
+      <div class="quick-links-grid" id="x-keywords-grid">
+        <!-- Teror & DC Twitter -->
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="teror" data-query="pinjol sebar data">🚨 "pinjol sebar data"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="teror" data-query="teror debt collector pinjol">🚨 "teror dc pinjol"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="teror" data-query="teror kontak darurat pinjol">🚨 "teror kontak darurat"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="teror" data-query="dc pinjol kasar maki">🚨 "dc pinjol kasar"</button>
+
+        <!-- Bunga & Tenor Twitter -->
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="bunga" data-query="bunga harian pinjol mencekik">💸 "bunga mencekik"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="bunga" data-query="tenor 7 hari pinjol ilegal">💸 "tenor 7 hari"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="bunga" data-query="transfer sepihak pinjol ilegal">💸 "transfer sepihak"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="bunga" data-query="dana tiba tiba masuk rekening pinjol">💸 "dana tiba-tiba"</button>
+
+        <!-- Joki & Umpan Kilat Twitter -->
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="joki" data-query="joki pinjol penipuan">⚡ "joki pinjol"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="joki" data-query="jasa hapus data pinjol ilegal">⚡ "jasa hapus data"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="joki" data-query="data busuk cair pinjol">⚡ "data busuk"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="joki" data-query="link apk pinjol wa">⚡ "link apk wa"</button>
+
+        <!-- Korban & OJK Twitter -->
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="korban" data-query="korban aplikasi pinjol ilegal">👥 "korban pinjol"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="korban" data-query="galbay pinjol ancaman teror">👥 "galbay pinjol"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="korban" data-query="pengalaman diteror pinjol ilegal">👥 "pengalaman pinjol"</button>
+        <button class="preset-link-btn x-btn x-preset-btn" data-cat="korban" data-query="satgas pasti ojk pinjol ilegal">🛡️ "satgas pasti ojk"</button>
+      </div>
+
+      <!-- Custom Search X with f=live -->
+      <div class="search-row">
+        <input type="text" class="search-input" id="custom-x-query" value="pinjol sebar data" placeholder="Ketik kata kunci Twitter / X (live)..." />
+        <button class="search-btn" id="btn-custom-x-search" style="background:#0f172a;color:#fff;border-color:#0f172a;">Buka 𝕏 Live</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════════════════
+       PANEL 3: PORTAL BERITA & SURAT ADUAN KONSUMEN (MEDIAKONSUMEN, DETIK, KOMPAS, NEWS)
+       ═════════════════════════════════════════════════════════════════════════ -->
+  <div class="panel-view" id="view-news">
+    <div class="section-card">
+      <div class="card-label">
+        <span>1. Preset Surat Pembaca &amp; Berita:</span>
+        <span style="font-size:9.5px;color:#92400e;font-weight:800;background:#fef3c7;padding:2px 6px;border-radius:4px;">8 Portal Preset</span>
+      </div>
+
+      <!-- Kategori Filter Tab News -->
+      <div class="category-tabs" id="news-cat-tabs">
+        <button class="cat-tab active" data-cat="all">Semua</button>
+        <button class="cat-tab" data-cat="aduan">📝 MediaKonsumen</button>
+        <button class="cat-tab" data-cat="media">🚨 Detik &amp; Kompas</button>
+      </div>
+
+      <!-- Dynamic Keywords Grid News -->
+      <div class="quick-links-grid" id="news-keywords-grid">
+        <!-- MediaKonsumen.com -->
+        <button class="preset-link-btn news-btn news-preset-btn" data-cat="aduan" data-target="mediakonsumen" data-query="teror pinjol ilegal">📝 [Aduan] Teror Pinjol</button>
+        <button class="preset-link-btn news-btn news-preset-btn" data-cat="aduan" data-target="mediakonsumen" data-query="pinjol bunga mencekik">📝 [Aduan] Bunga Mencekik</button>
+        <button class="preset-link-btn news-btn news-preset-btn" data-cat="aduan" data-target="mediakonsumen" data-query="sebar data kontak darurat">📝 [Aduan] Sebar Kontak</button>
+        <button class="preset-link-btn news-btn news-preset-btn" data-cat="aduan" data-target="mediakonsumen" data-query="transfer sepihak pinjol">📝 [Aduan] Transfer Sepihak</button>
+
+        <!-- Detik & Kompas -->
+        <button class="preset-link-btn news-btn news-preset-btn" data-cat="media" data-target="detik" data-query="penggerebekan pinjol ilegal">🚨 [Detik] Gerebek Pinjol</button>
+        <button class="preset-link-btn news-btn news-preset-btn" data-cat="media" data-target="detik" data-query="satgas pasti ojk blokir pinjol">🚨 [Detik] Satgas PASTI OJK</button>
+        <button class="preset-link-btn news-btn news-preset-btn" data-cat="media" data-target="kompas" data-query="korban jeratan pinjol ilegal">🚨 [Kompas] Korban Pinjol</button>
+        <button class="preset-link-btn news-btn news-preset-btn" data-cat="media" data-target="kompas" data-query="daftar fintech lending ilegal">🚨 [Kompas] Daftar Ilegal</button>
+      </div>
+
+      <!-- Custom Search News with Target Selector -->
+      <div class="search-row" style="margin-bottom:9px;">
+        <select id="custom-news-target" style="padding:6px 6px;border:1px solid #cbd5e1;border-radius:6px;font-size:10.5px;background:#fff;font-weight:700;color:#92400e;outline:none;">
+          <option value="mediakonsumen" selected>MediaKonsumen</option>
+          <option value="detik">Detik.com</option>
+          <option value="kompas">Kompas.com</option>
+        </select>
+        <input type="text" class="search-input" id="custom-news-query" value="teror pinjol ilegal" placeholder="Kata kunci berita/aduan..." />
+        <button class="search-btn" id="btn-custom-news-search" style="background:#b45309;color:#fff;border-color:#b45309;">Cari Berita</button>
+      </div>
+
+      <!-- Navigasi Paginasi Cerdas Multi-Page -->
+      <div style="padding: 8px 9px; background: #fffbeb; border: 1px dashed #fde68a; border-radius: 7px; margin-bottom: 8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 6px;">
+          <span style="font-size:10.5px; font-weight:800; color:#92400e;">📄 Navigasi Paginasi Halaman:</span>
+          <button id="btn-reset-news-cache" style="background:none; border:none; color:#dc2626; font-size:9.5px; font-weight:700; cursor:pointer; text-decoration:underline;" title="Kosongkan memori artikel lintas halaman">🗑️ Reset Akumulasi</button>
+        </div>
+        <div style="display:flex; gap:4px; align-items:center; justify-content:space-between;">
+          <button class="search-btn news-page-nav-btn" id="btn-prev-page" style="padding:4px 7px; font-size:10px; background:#ffffff; color:#92400e; border-color:#fde68a;">◀ Prev</button>
+          <button class="search-btn news-page-btn active" data-page="1" style="padding:4px 8px; font-size:10.5px; background:#b45309; color:#fff; border-color:#b45309; font-weight:800;">Hal 1</button>
+          <button class="search-btn news-page-btn" data-page="2" style="padding:4px 8px; font-size:10.5px; background:#ffffff; color:#92400e; border-color:#fde68a; font-weight:700;">Hal 2</button>
+          <button class="search-btn news-page-btn" data-page="3" style="padding:4px 8px; font-size:10.5px; background:#ffffff; color:#92400e; border-color:#fde68a; font-weight:700;">Hal 3</button>
+          <button class="search-btn news-page-btn" data-page="4" style="padding:4px 8px; font-size:10.5px; background:#ffffff; color:#92400e; border-color:#fde68a; font-weight:700;">Hal 4</button>
+          <button class="search-btn news-page-nav-btn" id="btn-next-page" style="padding:4px 7px; font-size:10px; background:#ffffff; color:#92400e; border-color:#fde68a;">Next ▶</button>
+        </div>
+        <div style="font-size:9.5px; color:#78350f; margin-top:5px; line-height:1.3;">
+          💡 <em>Tips:</em> Klik tombol <strong>"⚡ Mulai Auto-Crawl Berita"</strong> di bawah ➔ sistem otomatis membaca naskah artikel utuh di balik tautan secara mandiri!
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════════════════════════════════════════════════════════════════
+       STEP 2: EKSTRAKSI & AUTO-SCROLL UNTUK WEB DETEKTOR
+       ═════════════════════════════════════════════════════════════════════════ -->
+  <div class="section-card">
+    <div class="card-label">
+      <span>2. Ekstraksi untuk Web Detektor:</span>
+      <span id="live-detected-badge" style="font-size:9.5px;color:#166534;background:#dcfce7;padding:2px 8px;border-radius:99px;font-weight:700;">🔍 Memindai...</span>
+    </div>
+
+    <button class="btn-action-primary" id="copy-html-btn">
+      <span style="font-size:15px;">🌐</span>
+      <span id="copy-html-btn-text">Salin HTML Source (Siap Analisis Web)</span>
+    </button>
+
+    <div style="display:flex; gap:6px;">
+      <select id="scroll-depth-select" style="flex:1;padding:7px 8px;border:1px solid #cbd5e1;border-radius:6px;font-size:10.5px;background:#ffffff;font-weight:700;color:#1e3a8a;outline:none;">
+        <option value="15">🚀 15x Scroll (Banyak)</option>
+        <option value="25" selected>🔥 25x Deep Scroll (Ekstra Banyak)</option>
+        <option value="40">⚡ 40x Ultra Scroll (Maksimal)</option>
+      </select>
+      <button class="btn-action-secondary" id="btn-auto-scroll" style="flex:1.2;">
+        <span id="scrape-icon">⚡</span>
+        <span id="scrape-text">Mulai Auto-Scroll</span>
+        <div class="spinner" id="scrape-spinner" style="display:none;"></div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Status / Result Box -->
+  <div class="status-box" id="status-box">
+    <div class="status-text" id="status-text">
+      💡 <em>Petunjuk:</em> Buka platform di atas, lakukan <strong>"Auto-Scroll"</strong>, lalu klik tombol hijau <strong>"🌐 Salin HTML Source"</strong> dan tempel di <strong>Card B Web Detektor</strong>.
+    </div>
+  </div>
+
+  <!-- Preview Area -->
+  <div class="preview-area" id="preview-area"></div>
+
+</div>
+
+<div class="toast" id="toast">✅ HTML Berhasil Disalin!</div>
+
+<script src="popup.js"></script>
+</body>
+</html>

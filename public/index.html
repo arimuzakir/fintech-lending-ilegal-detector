@@ -1,0 +1,3028 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aplikasi Cerdas Berbasis Kecerdasan Buatan untuk Deteksi Otomatis Fintech Lending Ilegal di Indonesia</title>
+<meta name="description" content="Aplikasi Cerdas Berbasis Kecerdasan Buatan untuk Deteksi Otomatis Fintech Lending Ilegal di Indonesia.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════════════════
+   DESIGN SYSTEM — PURE MODERN RESEARCH UI WITH macOS WINDOW ACCENTS
+   ═══════════════════════════════════════════════════════════════════════════ */
+:root {
+  --bg-page:        #f8fafc;
+  --bg-card:        #ffffff;
+  --bg-subtle:      #f1f5f9;
+  --bg-muted:       #f8fafc;
+  
+  --border-light:   #e2e8f0;
+  --border-hover:   #cbd5e1;
+  --border-focus:   #1e40af;
+  
+  --text-main:      #0f172a;
+  --text-muted:     #475569;
+  --text-dim:       #94a3b8;
+  
+  /* Brand Colors */
+  --apple-blue:     #0071e3;
+  --navy-900:       #0f172a;
+  --navy-800:       #1e3a8a;
+  --navy-700:       #1d4ed8;
+  --navy-600:       #2563eb;
+  --navy-50:        #eff6ff;
+  --navy-100:       #dbeafe;
+  
+  /* Gold Accent */
+  --gold-700:       #b45309;
+  --gold-600:       #d97706;
+  --gold-500:       #f59e0b;
+  --gold-50:        #fffbeb;
+  --gold-100:       #fef3c7;
+  
+  /* Semantics */
+  --danger-red:     #dc2626;
+  --danger-bg:      #fef2f2;
+  --danger-border:  #fecaca;
+  --danger-text:    #991b1b;
+  
+  --success-green:  #16a34a;
+  --success-bg:     #f0fdf4;
+  --success-border: #bbf7d0;
+  --success-text:   #166534;
+  
+  --font-heading:   'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body:      'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-mono:      'JetBrains Mono', monospace;
+  
+  --shadow-xs:      0 1px 2px rgba(15,23,42,0.05);
+  --shadow-sm:      0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+  --shadow-md:      0 4px 12px -1px rgba(15,23,42,0.07), 0 2px 6px -1px rgba(15,23,42,0.04);
+  --shadow-lg:      0 12px 28px -4px rgba(15,23,42,0.08), 0 4px 12px -2px rgba(15,23,42,0.04);
+  
+  --radius-xl:      16px;
+  --radius-lg:      12px;
+  --radius-md:      8px;
+  --radius-sm:      6px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 15px;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.header-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 28px 30px 22px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--navy-800) 0%, var(--navy-600) 60%, var(--gold-500) 100%);
+}
+
+.header-title {
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2.1vw, 1.7rem);
+  font-weight: 800;
+  color: var(--navy-800);
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  max-width: 960px;
+  margin-bottom: 8px;
+}
+
+.header-subtitle {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  max-width: 780px;
+  margin-bottom: 16px;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.info-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  padding: 4px 13px;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.info-chip.online {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+  color: var(--success-text);
+}
+
+/* ── Tab Navigation ──────────────────────────────────────────────────────── */
+.tabs-wrapper {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 5px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-xs);
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+}
+
+.tab-nav-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 10px 18px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: all 0.18s ease;
+}
+
+.tab-nav-btn:hover {
+  background: var(--bg-subtle);
+  color: var(--navy-800);
+}
+
+.tab-nav-btn.active {
+  background: var(--navy-800);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(30,58,138,0.25);
+}
+
+.tab-pane {
+  display: none;
+  animation: fadeIn 0.25s ease-out;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Model Selector Bar ──────────────────────────────────────────────────── */
+.model-selection-bar {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 12px 18px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  box-shadow: var(--shadow-xs);
+}
+
+.model-sel-label {
+  font-family: var(--font-heading);
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.model-dropdown {
+  background: var(--bg-muted);
+  border: 1.5px solid var(--navy-700);
+  border-radius: var(--radius-md);
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  outline: none;
+  cursor: pointer;
+  flex: 1;
+  max-width: 480px;
+  transition: border-color 0.2s;
+}
+
+.model-dropdown:focus {
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.model-badge-active {
+  background: var(--navy-50);
+  border: 1px solid var(--navy-100);
+  color: var(--navy-800);
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+/* ── Dual Input Layout (Card A & Card B as macOS App Windows) ─────────────── */
+.dual-input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 820px) {
+  .dual-input-grid { grid-template-columns: 1fr; }
+}
+
+.macos-window {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.macos-window:hover {
+  border-color: #93c5fd;
+  box-shadow: var(--shadow-lg);
+}
+
+.macos-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  user-select: none;
+}
+
+.macos-traffic-lights {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+}
+
+.traffic-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-shadow: inset 0 1px 1px rgba(0,0,0,0.18);
+  transition: transform 0.15s ease;
+}
+
+.traffic-dot.close    { background: #ff5f56; border: 1px solid #e0443e; }
+.traffic-dot.minimize { background: #ffbd2e; border: 1px solid #dea123; }
+.traffic-dot.maximize { background: #27c93f; border: 1px solid #1aab29; }
+
+.macos-window:hover .traffic-dot { transform: scale(1.08); }
+
+.macos-window-title {
+  font-family: var(--font-heading);
+  font-size: 0.86rem;
+  font-weight: 800;
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.card-body-inner {
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.dropzone-box {
+  border: 2px dashed #94a3b8;
+  border-radius: var(--radius-lg);
+  background: #f8fafc;
+  padding: 28px 18px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropzone-box:hover, .dropzone-box.dragover {
+  border-color: #2563eb;
+  background: #eff6ff;
+  transform: scale(1.008);
+}
+
+.dropzone-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #dbeafe;
+  color: #1e3a8a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin: 0 auto 10px;
+}
+
+.dropzone-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  margin-bottom: 3px;
+}
+
+.dropzone-desc {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-bottom: 10px;
+}
+
+.format-tags {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.format-tag {
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  color: var(--navy-800);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.file-selected-alert {
+  display: none;
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-top: 12px;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Card B */
+.scraper-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.ext-download-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--navy-50);
+  border: 1px solid var(--navy-100);
+  color: var(--navy-800);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.ext-download-badge:hover {
+  background: var(--navy-800);
+  color: #ffffff;
+}
+
+.btn-paste-clipboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #166534;
+  padding: 5px 11px;
+  border-radius: var(--radius-sm);
+  font-size: 0.74rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-paste-clipboard:hover {
+  background: #16a34a;
+  color: #ffffff;
+  border-color: #16a34a;
+}
+
+.scraper-textarea {
+  width: 100%;
+  flex: 1;
+  min-height: 135px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-main);
+  resize: vertical;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.scraper-textarea:focus {
+  border-color: var(--navy-600);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+.char-counter {
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  text-align: right;
+  margin-top: 4px;
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+}
+
+/* ── Standard Cards & Buttons ────────────────────────────────────────────── */
+.white-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 24px 26px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+}
+
+.card-heading {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--navy-800);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.card-heading-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-heading-title i { color: var(--navy-700); }
+
+.btn-primary {
+  width: 100%;
+  background: var(--navy-800);
+  color: #ffffff;
+  border: none;
+  padding: 11px 18px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--navy-900);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-primary:disabled {
+  background: var(--border-light);
+  color: var(--text-dim);
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--text-muted);
+  padding: 9px 16px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 0.84rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--bg-subtle);
+  color: var(--navy-800);
+  border-color: var(--border-hover);
+}
+
+.btn-spinner {
+  width: 15px;
+  height: 15px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── PROGRESS SECTION (Clean Horizontal Timeline Steps) ─────────────────── */
+#progress-section {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 24px 26px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+}
+
+.timeline-steps {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  position: relative;
+}
+
+.timeline-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  z-index: 2;
+  position: relative;
+}
+
+.step-number {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--bg-subtle);
+  border: 2px solid var(--border-light);
+  color: var(--text-dim);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.step-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.timeline-connector {
+  flex: 1;
+  height: 2px;
+  background: var(--border-light);
+  margin: 0 6px 18px;
+  transition: background 0.3s ease;
+}
+
+.timeline-step.active .step-number {
+  background: var(--navy-50);
+  border-color: var(--navy-800);
+  color: var(--navy-800);
+  box-shadow: 0 0 0 4px rgba(30,58,138,0.12);
+}
+
+.timeline-step.active .step-text { color: var(--navy-800); }
+
+.timeline-step.done .step-number {
+  background: var(--success-bg);
+  border-color: var(--success-green);
+  color: var(--success-green);
+}
+
+.timeline-step.done .step-text { color: var(--success-green); }
+
+.progress-info-bar {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+}
+
+.progress-title-row {
+  display: flex;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--navy-900);
+  margin-bottom: 8px;
+}
+
+.progress-track {
+  height: 9px;
+  background: var(--border-light);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--navy-800) 0%, var(--navy-600) 60%, var(--gold-500) 100%);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+.progress-subtext {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ── RESULTS SECTION (Charts & Table) ────────────────────────────────────── */
+#results-section {
+  display: none;
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-xl);
+  padding: 24px 26px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow-sm);
+}
+
+.results-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.results-main-title {
+  font-family: var(--font-heading);
+  font-size: 1.22rem;
+  font-weight: 800;
+  color: var(--navy-800);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.metric-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .metric-summary-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+.summary-metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+  border-top: 3px solid var(--border-light);
+}
+
+.summary-metric-card.total   { border-top-color: var(--navy-800); }
+.summary-metric-card.illegal { border-top-color: var(--danger-red); }
+.summary-metric-card.legal   { border-top-color: var(--success-green); }
+.summary-metric-card.conf    { border-top-color: var(--gold-600); }
+
+.metric-label-top {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.metric-number-big {
+  font-family: var(--font-heading);
+  font-size: 1.85rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--navy-900);
+}
+
+.summary-metric-card.total   .metric-number-big { color: var(--navy-800); }
+.summary-metric-card.illegal .metric-number-big { color: var(--danger-red); }
+.summary-metric-card.legal   .metric-number-big { color: var(--success-green); }
+.summary-metric-card.conf    .metric-number-big { color: var(--gold-700); }
+
+/* ─── 3-Card Tri-Grid for Batch Results ─── */
+.results-charts-tri-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+@media (max-width: 992px) {
+  .results-charts-tri-grid { grid-template-columns: 1fr; }
+}
+
+.chart-card-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+}
+
+.interactive-card {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.interactive-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3.5px;
+  background: linear-gradient(90deg, var(--navy-800), var(--gold-600), #22c55e);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-7px) scale(1.012);
+  border-color: #93c5fd;
+  box-shadow: 0 18px 32px -6px rgba(30, 58, 138, 0.12), 0 8px 16px -4px rgba(0, 0, 0, 0.05);
+}
+
+.interactive-card:hover::before { opacity: 1; }
+.interactive-card:hover .chart-box-title i { transform: scale(1.22) rotate(-6deg); color: var(--navy-700); }
+.interactive-card:hover .chart-canvas-container { transform: scale(1.02); }
+
+.chart-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.chart-box-title {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--navy-900);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.chart-box-title i {
+  color: var(--navy-800);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease;
+}
+
+.chart-badge-tag {
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 3px 9px;
+  border-radius: 999px;
+}
+.chart-badge-tag.danger { background: #fee2e2; color: #b91c1c; border: 1px solid #fecaca; }
+.chart-badge-tag.primary { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
+.chart-badge-tag.gold { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+
+.chart-canvas-container {
+  position: relative;
+  height: 200px;
+  flex: 1;
+  transition: transform 0.3s ease;
+}
+
+.chart-mini-insights {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+
+.insight-pill {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.insight-pill.danger { background: #fef2f2; color: #991b1b; }
+.insight-pill.success { background: #f0fdf4; color: #166534; }
+.insight-pill.neutral { background: #f8fafc; color: #334155; border: 1px solid #e2e8f0; }
+
+.data-table-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 22px;
+}
+
+.data-table-header {
+  background: var(--bg-muted);
+  padding: 12px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.data-table-title {
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 800;
+  color: var(--navy-800);
+}
+
+.table-scroll-area {
+  overflow-x: auto;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.modern-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.modern-table th {
+  background: var(--bg-subtle);
+  color: var(--navy-900);
+  font-family: var(--font-heading);
+  font-size: 0.74rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 11px 16px;
+  text-align: left;
+  border-bottom: 2px solid var(--border-light);
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+.modern-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.modern-table tr:hover td { background-color: var(--bg-muted); }
+
+.badge-tag-illegal {
+  background: var(--danger-bg);
+  border: 1px solid var(--danger-border);
+  color: var(--danger-text);
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.badge-tag-legal {
+  background: var(--success-bg);
+  border: 1px solid var(--success-border);
+  color: var(--success-text);
+  font-weight: 700;
+  font-size: 0.7rem;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ─── Table Filter Pills & Pagination Controls ─── */
+.table-filter-pills {
+  display: inline-flex;
+  gap: 4px;
+  background: var(--bg-subtle);
+  padding: 3px;
+  border-radius: 8px;
+  border: 1px solid var(--border-light);
+}
+
+.tbl-filter-btn {
+  padding: 4px 10px;
+  border: none;
+  background: transparent;
+  border-radius: 6px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.tbl-filter-btn:hover {
+  color: var(--navy-900);
+  background: rgba(255,255,255,0.6);
+}
+
+.tbl-filter-btn.active {
+  background: #ffffff;
+  color: var(--navy-900);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+}
+
+.tbl-filter-btn.filter-danger.active {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.tbl-filter-btn.filter-success.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.page-btn {
+  padding: 5px 10px;
+  border: 1px solid var(--border-light);
+  background: #ffffff;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.page-btn:hover:not(:disabled) {
+  background: var(--navy-50);
+  border-color: var(--navy-600);
+  color: var(--navy-800);
+}
+.page-btn:disabled {
+  background: var(--bg-subtle);
+  color: var(--text-dim);
+  cursor: not-allowed;
+  border-color: var(--border-light);
+}
+.page-btn.active {
+  background: var(--navy-800);
+  color: #ffffff;
+  border-color: var(--navy-800);
+}
+
+/* ── TAB 2: UJI TEKS CEPAT ────────────────────────────────────────────────── */
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.preset-chip {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 9px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.preset-chip:hover {
+  background: var(--navy-50);
+  border-color: var(--navy-600);
+  transform: translateY(-1px);
+}
+
+.preset-chip-title { font-size: 0.78rem; font-weight: 700; color: var(--navy-900); }
+.preset-chip-desc  { font-size: 0.7rem; color: var(--text-muted); }
+
+.quick-textarea {
+  width: 100%;
+  min-height: 90px;
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: var(--text-main);
+  resize: vertical;
+  outline: none;
+  margin-bottom: 12px;
+}
+
+.quick-textarea:focus {
+  border-color: var(--navy-600);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+.quick-actions-bar { display: flex; gap: 10px; }
+
+.single-result-box {
+  display: none;
+  margin-top: 22px;
+  border-top: 1px solid var(--border-light);
+  padding-top: 20px;
+}
+
+.result-status-banner {
+  padding: 16px 20px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 16px;
+  border: 1px solid transparent;
+}
+
+.result-status-banner.danger  { background: var(--danger-bg); border-color: var(--danger-border); }
+.result-status-banner.success { background: var(--success-bg); border-color: var(--success-border); }
+
+.status-icon-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.45rem;
+}
+
+.danger .status-icon-circle  { background: #fee2e2; color: var(--danger-red); }
+.success .status-icon-circle { background: #dcfce7; color: var(--success-green); }
+
+.status-text-title {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 900;
+}
+
+.danger .status-text-title { color: var(--danger-text); }
+.success .status-text-title { color: var(--success-text); }
+
+.status-sub-desc { font-size: 0.8rem; color: var(--text-muted); }
+
+.single-metrics-3grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.single-metric-item {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+}
+
+.single-metric-item span {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.single-metric-item strong {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--navy-900);
+}
+
+/* ── TAB 3: MODEL EVALUATION DASHBOARD ───────────────────────────────────── */
+.chart-row-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 768px) {
+  .chart-row-grid { grid-template-columns: 1fr; }
+}
+
+.model-tabs-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 22px;
+  background: var(--bg-muted);
+  padding: 6px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+}
+
+.model-pill-btn {
+  flex: 1;
+  min-width: 150px;
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 9px 14px;
+  border-radius: var(--radius-md);
+  font-family: var(--font-heading);
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: all 0.18s ease;
+}
+
+.model-pill-btn:hover {
+  background: var(--bg-card);
+  color: var(--navy-800);
+  border-color: var(--border-light);
+}
+
+.model-pill-btn.active {
+  background: var(--navy-800);
+  color: #ffffff;
+  border-color: var(--navy-800);
+  box-shadow: 0 2px 6px rgba(30,58,138,0.2);
+}
+
+.eval-spec-card {
+  background: var(--bg-muted);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+.eval-spec-title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--navy-900);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spec-badges-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.spec-pill {
+  background: var(--bg-card);
+  border: 1px solid var(--border-light);
+  color: var(--navy-800);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.site-footer {
+  text-align: center;
+  padding: 26px 20px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  border-top: 1px solid var(--border-light);
+  margin-top: 30px;
+}
+</style>
+</head>
+<body>
+
+<div class="app-container">
+
+  <!-- Header Card (Simple & Professional Sesuai Riset) -->
+  <header class="header-card">
+    <h1 class="header-title">Aplikasi Cerdas Berbasis Kecerdasan Buatan untuk Deteksi Otomatis Fintech Lending Ilegal di Indonesia</h1>
+    <p class="header-subtitle">Platform Pengujian dan Deteksi Konten Digital Fintech Lending Ilegal Menggunakan Pemrosesan Bahasa Alami (NLP)</p>
+    
+    <div class="badge-row">
+      <div class="info-chip online" id="chip-status"><i class="fa-solid fa-circle-check"></i> Server Online</div>
+      <div class="info-chip" id="chip-model"><i class="fa-solid fa-brain"></i> Model: IndoBERT</div>
+      <div class="info-chip" id="chip-device"><i class="fa-solid fa-microchip"></i> Hardware: CPU</div>
+    </div>
+  </header>
+
+  <!-- 3 Main Tabs Navigation -->
+  <nav class="tabs-wrapper" role="tablist">
+    <button class="tab-nav-btn active" onclick="switchTab('analyze', this)" id="tab-analyze-btn">
+      <i class="fa-solid fa-magnifying-glass-chart"></i> 1. Analisis Dokumen &amp; Web Scraper
+    </button>
+    <button class="tab-nav-btn" onclick="switchTab('quick', this)" id="tab-quick-btn">
+      <i class="fa-solid fa-bolt"></i> 2. Uji Teks Cepat
+    </button>
+    <button class="tab-nav-btn" onclick="switchTab('metrics', this)" id="tab-metrics-btn">
+      <i class="fa-solid fa-chart-pie"></i> 3. Evaluasi &amp; Metrik Model
+    </button>
+  </nav>
+
+  <!-- ═════════════════════════════════════════════════════════════════════════
+       TAB 1: ANALISIS DATA (DUAL INPUT CARDS: CARD A & CARD B DENGAN macOS WINDOW)
+       ═════════════════════════════════════════════════════════════════════════ -->
+  <section id="pane-analyze" class="tab-pane active">
+
+    <!-- Model Selector for Batch Analysis -->
+    <div class="model-selection-bar">
+      <div class="model-sel-label">
+        <i class="fa-solid fa-microchip" style="color:var(--navy-700);"></i>
+        <span>Pilihan Model Klasifikasi:</span>
+      </div>
+      <select id="model-select-batch" class="model-dropdown" onchange="syncModelSelection(this.value)">
+        <option value="indobert" selected>👑 IndoBERT (Monolingual — Model Utama)</option>
+        <option value="bert_multilingual">🌐 BERT Multilingual (Cross-Lingual)</option>
+        <option value="indobert_tweet">🐦 IndoBERT-Tweet (Bahasa Medsos &amp; Slang)</option>
+        <option value="tfidf_logreg">📊 TF-IDF + Logistic Regression (Baseline)</option>
+      </select>
+      <div class="model-badge-active" id="active-model-badge">IndoBERT (Utama)</div>
+    </div>
+
+    <!-- Dual Input Grid (Hanya Card A & Card B yang memakai macOS Window Style) -->
+    <div class="dual-input-grid">
+
+      <!-- Card A: Upload Dokumen PDF / Excel (macOS Window) -->
+      <div class="macos-window">
+        <div class="macos-titlebar">
+          <div class="macos-traffic-lights">
+            <span class="traffic-dot close"></span>
+            <span class="traffic-dot minimize"></span>
+            <span class="traffic-dot maximize"></span>
+          </div>
+          <div class="macos-window-title">
+            <i class="fa-solid fa-file-pdf" style="color:var(--navy-700);"></i> Card A — Upload File Dokumen
+          </div>
+          <span class="format-tag">Batch Multi-Format</span>
+        </div>
+
+        <div class="card-body-inner">
+          <div class="dropzone-box" id="drop-zone" onclick="document.getElementById('file-input').click()"
+               ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+            <!-- Hidden input file agar tidak ada tombol 'Choose File No file chosen' yang bocor -->
+            <input type="file" id="file-input" style="display:none;" accept=".pdf,.xlsx,.xls,.csv,.txt" onchange="handleFileSelect(event)">
+            <div class="dropzone-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+            <div class="dropzone-title">Klik atau Tarik File ke Area Ini</div>
+            <div class="dropzone-desc">Sistem otomatis mengekstrak seluruh baris/kalimat untuk klasifikasi AI</div>
+            <div class="format-tags">
+              <span class="format-tag">.PDF</span>
+              <span class="format-tag">.XLSX</span>
+              <span class="format-tag">.XLS</span>
+              <span class="format-tag">.CSV</span>
+              <span class="format-tag">.TXT</span>
+            </div>
+          </div>
+
+          <div class="file-selected-alert" id="file-chosen">
+            <i class="fa-solid fa-check-circle"></i>
+            <span id="file-chosen-name">dokumen_terpilih.pdf</span>
+          </div>
+
+          <div style="margin-top:14px;">
+            <button class="btn-primary" id="btn-analyze-doc" disabled onclick="runDocumentAnalysis()">
+              <i class="fa-solid fa-play"></i>
+              <span id="btn-analyze-doc-text">Mulai Analisis Dokumen</span>
+              <div class="btn-spinner" id="spinner-doc"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card B: Web Scraper HTML Source (macOS Window) -->
+      <div class="macos-window scraper-box">
+        <div class="macos-titlebar">
+          <div class="macos-traffic-lights">
+            <span class="traffic-dot close"></span>
+            <span class="traffic-dot minimize"></span>
+            <span class="traffic-dot maximize"></span>
+          </div>
+          <div class="macos-window-title">
+            <i class="fa-solid fa-globe" style="color:var(--navy-700);"></i> Card B — Data Scraped Media Sosial &amp; Berita (Salinan HTML)
+          </div>
+          <span class="format-tag" style="color:var(--gold-700);background:var(--gold-50);">FB / X / Berita</span>
+        </div>
+
+        <div class="card-body-inner">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+            <span style="font-size:0.75rem;font-weight:700;color:var(--navy-800);">
+              <i class="fa-solid fa-code" style="color:var(--gold-600);margin-right:4px;"></i>
+              Salinan HTML Halaman
+            </span>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <button type="button" class="btn-paste-clipboard" onclick="pasteFromClipboard()" title="Tempel otomatis kode HTML dari clipboard Anda">
+                <i class="fa-solid fa-paste"></i> Tempel dari Clipboard
+              </button>
+              <a href="/api/download-extension" class="ext-download-badge" title="Unduh ZIP Ekstensi Browser untuk Mengumpulkan Data Teks Media Sosial">
+                <i class="fa-solid fa-puzzle-piece" style="color:var(--gold-600)"></i>
+                Unduh Ekstensi .ZIP
+              </a>
+            </div>
+          </div>
+
+          <p style="font-size:0.76rem;color:var(--text-muted);margin-bottom:8px;">
+            Klik tombol <strong>"🌐 Salin HTML Source"</strong> pada ekstensi Chrome, lalu klik <strong>"Tempel dari Clipboard"</strong> atau tekan (Ctrl+V) di bawah:
+          </p>
+
+          <textarea class="scraper-textarea" id="source-textarea"
+            placeholder="Tempel kode HTML halaman (hasil 'Salin HTML Source' dari ekstensi Chrome atau View Page Source) di sini...&#10;&#10;Sistem secara otomatis mem-parse struktur DOM, membersihkan tag script/SVG, dan mengekstrak seluruh teks postingan &amp; ulasan media sosial untuk klasifikasi NLP IndoBERT."
+            oninput="handleSourceInput()"></textarea>
+
+          <div class="char-counter" id="source-char">0 karakter terdeteksi</div>
+
+          <div>
+            <button class="btn-primary" id="btn-analyze-source" disabled onclick="runSourceAnalysis()">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <span id="btn-analyze-source-text">Ekstrak &amp; Analisis Salinan HTML</span>
+              <div class="btn-spinner" id="spinner-source"></div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /dual-input-grid -->
+
+    <!-- Progress Pipeline (Normal Horizontal Stepper) -->
+    <div id="progress-section">
+      <div class="timeline-steps">
+        <div class="timeline-step" id="step-1">
+          <div class="step-number" id="step-1-circle">1</div>
+          <div class="step-text">Ekstraksi Teks</div>
+        </div>
+        <div class="timeline-connector" id="line-1"></div>
+        <div class="timeline-step" id="step-2">
+          <div class="step-number" id="step-2-circle">2</div>
+          <div class="step-text">Segmentasi Kalimat</div>
+        </div>
+        <div class="timeline-connector" id="line-2"></div>
+        <div class="timeline-step" id="step-3">
+          <div class="step-number" id="step-3-circle">3</div>
+          <div class="step-text">Inferensi Model</div>
+        </div>
+        <div class="timeline-connector" id="line-3"></div>
+        <div class="timeline-step" id="step-4">
+          <div class="step-number" id="step-4-circle">4</div>
+          <div class="step-text">Visualisasi Hasil</div>
+        </div>
+      </div>
+
+      <div class="progress-info-bar">
+        <div class="progress-title-row">
+          <span id="progress-title">Mempersiapkan pipeline NLP...</span>
+          <span id="progress-pct-text">0%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-bar-inner" id="progress-bar-fill"></div>
+        </div>
+        <div class="progress-subtext" id="progress-status">Menginisialisasi modul parsing...</div>
+        <div class="progress-subtext" id="progress-counter" style="font-family:var(--font-mono);margin-top:2px;"></div>
+      </div>
+    </div>
+
+    <!-- Results Section -->
+    <div id="results-section">
+      <div class="results-header-bar">
+        <div class="results-main-title">
+          <i class="fa-solid fa-square-poll-vertical" style="color:var(--navy-800);"></i>
+          Hasil Evaluasi Deteksi Konten
+          <span id="result-model-badge" style="font-size:0.75rem;padding:4px 10px;background:var(--navy-50);color:var(--navy-800);border-radius:99px;border:1px solid var(--navy-100);font-weight:700;">IndoBERT</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <button class="btn-secondary" onclick="downloadCSV()"><i class="fa-solid fa-file-excel" style="color:#16a34a;"></i> Ekspor CSV</button>
+          <button class="btn-secondary" onclick="downloadPDF()"><i class="fa-solid fa-file-pdf" style="color:#dc2626;"></i> Ekspor PDF</button>
+          <button class="btn-secondary" onclick="resetAnalysis()"><i class="fa-solid fa-rotate-right"></i> Reset</button>
+        </div>
+      </div>
+
+      <!-- 4 Stat Tiles -->
+      <div class="metric-summary-grid">
+        <div class="summary-metric-card total">
+          <div class="metric-label-top">Total Sampel Dianalisis</div>
+          <div class="metric-number-big" id="res-total">0</div>
+        </div>
+        <div class="summary-metric-card illegal">
+          <div class="metric-label-top">Terdeteksi Ilegal</div>
+          <div class="metric-number-big" id="res-illegal">0</div>
+        </div>
+        <div class="summary-metric-card legal">
+          <div class="metric-label-top">Terdeteksi Legal / Netral</div>
+          <div class="metric-number-big" id="res-legal">0</div>
+        </div>
+        <div class="summary-metric-card conf">
+          <div class="metric-label-top">Rata-Rata Confidence</div>
+          <div class="metric-number-big" id="res-avgconf">—</div>
+        </div>
+      </div>
+
+      <!-- Batch Charts Tri-Grid (3 Focused Data Result Cards with Micro-Animations) -->
+      <div class="results-charts-tri-grid">
+        <!-- Card 1: Proporsi Klasifikasi (Donut Chart) -->
+        <div class="chart-card-box interactive-card">
+          <div class="chart-box-header">
+            <div class="chart-box-title">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Proporsi Klasifikasi</span>
+            </div>
+            <span class="chart-badge-tag danger" id="donut-badge-pct">—% Ilegal</span>
+          </div>
+          <div class="chart-canvas-container"><canvas id="chart-donut"></canvas></div>
+          <div class="chart-mini-insights">
+            <div class="insight-pill danger"><i class="fa-solid fa-triangle-exclamation"></i> Ilegal: <strong id="donut-illegal-txt">0</strong></div>
+            <div class="insight-pill success"><i class="fa-solid fa-shield-halved"></i> Legal: <strong id="donut-legal-txt">0</strong></div>
+          </div>
+        </div>
+
+        <!-- Card 2: Jumlah Teks per Kategori (Bar Chart) -->
+        <div class="chart-card-box interactive-card">
+          <div class="chart-box-header">
+            <div class="chart-box-title">
+              <i class="fa-solid fa-chart-bar"></i>
+              <span>Jumlah Teks per Kategori</span>
+            </div>
+            <span class="chart-badge-tag primary" id="hbar-badge-total">— Data</span>
+          </div>
+          <div class="chart-canvas-container"><canvas id="chart-hbar"></canvas></div>
+          <div class="chart-mini-insights">
+            <div class="insight-pill neutral"><i class="fa-solid fa-scale-balanced"></i> Rasio Risiko: <strong id="hbar-ratio-txt">—</strong></div>
+          </div>
+        </div>
+
+        <!-- Card 3: Distribusi Skor Keyakinan (Confidence Score) -->
+        <div class="chart-card-box interactive-card">
+          <div class="chart-box-header">
+            <div class="chart-box-title">
+              <i class="fa-solid fa-chart-line"></i>
+              <span>Distribusi Skor Keyakinan</span>
+            </div>
+            <span class="chart-badge-tag gold" id="conf-badge-avg">Rata-rata —%</span>
+          </div>
+          <div class="chart-canvas-container"><canvas id="chart-conf-dist"></canvas></div>
+          <div class="chart-mini-insights">
+            <div class="insight-pill success"><i class="fa-solid fa-circle-check"></i> Rentang Dominan: <strong id="conf-high-txt">—</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Table with Filter Pills & Pagination -->
+      <div class="data-table-container">
+        <div class="data-table-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <div class="data-table-title"><i class="fa-solid fa-table-list" style="margin-right:6px;"></i> Rincian Hasil Prediksi per Kalimat</div>
+            <div class="table-filter-pills">
+              <button class="tbl-filter-btn active" id="btn-filter-all" onclick="filterTable('all', this)">Semua (<span id="count-filter-all">0</span>)</button>
+              <button class="tbl-filter-btn filter-danger" id="btn-filter-illegal" onclick="filterTable('illegal', this)">🚨 Ilegal (<span id="count-filter-illegal">0</span>)</button>
+              <button class="tbl-filter-btn filter-success" id="btn-filter-legal" onclick="filterTable('legal', this)">✅ Legal (<span id="count-filter-legal">0</span>)</button>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="display:flex;align-items:center;gap:6px;font-size:0.8rem;color:var(--text-muted);">
+              <span>Baris:</span>
+              <select id="table-page-size" onchange="changePageSize(this.value)" style="padding:4px 8px;border:1px solid var(--border-light);border-radius:6px;font-size:0.8rem;outline:none;background:#fff;font-weight:700;color:var(--navy-900);">
+                <option value="50">50</option>
+                <option value="100" selected>100</option>
+                <option value="250">250</option>
+                <option value="all">Semua (Tanpa Batas)</option>
+              </select>
+            </div>
+            <div style="font-size:0.82rem;font-weight:800;color:var(--navy-900);" id="table-count">— baris</div>
+          </div>
+        </div>
+        
+        <div class="table-scroll-area">
+          <table class="modern-table">
+            <thead>
+              <tr>
+                <th style="width:45px">No</th>
+                <th>Kalimat / Teks Teranalisis</th>
+                <th style="width:130px">Model Digunakan</th>
+                <th style="width:120px">Prediksi</th>
+                <th style="width:140px">Keyakinan</th>
+                <th style="width:85px">Latensi</th>
+              </tr>
+            </thead>
+            <tbody id="result-tbody"></tbody>
+          </table>
+        </div>
+
+        <!-- Table Pagination Footer -->
+        <div class="table-pagination-footer" id="table-pagination-footer" style="display:flex;justify-content:space-between;align-items:center;padding:12px 16px;border-top:1px solid var(--border-light);background:#ffffff;border-radius:0 0 var(--radius-lg) var(--radius-lg);">
+          <div style="font-size:0.8rem;color:var(--text-muted);font-weight:600;" id="pagination-info">Menampilkan baris...</div>
+          <div style="display:flex;gap:5px;align-items:center;" id="pagination-controls">
+            <!-- Buttons injected dynamically by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════════════════
+       TAB 2: UJI TEKS CEPAT (SINGLE TEST WITH MODEL PICKER)
+       ═════════════════════════════════════════════════════════════════════════ -->
+  <section id="pane-quick" class="tab-pane">
+    <div class="white-card">
+      <div class="card-heading">
+        <div class="card-heading-title">
+          <i class="fa-solid fa-bolt"></i> Uji Cepat Kalimat Tunggal Secara Real-Time
+        </div>
+        <span class="format-tag">Inference Testing</span>
+      </div>
+
+      <!-- Model Selector for Quick Test -->
+      <div class="model-selection-bar" style="margin-bottom:14px;background:var(--bg-subtle);">
+        <div class="model-sel-label">
+          <i class="fa-solid fa-brain" style="color:var(--navy-700);"></i>
+          <span>Pilihan Model Uji:</span>
+        </div>
+        <select id="model-select-quick" class="model-dropdown" onchange="syncModelSelection(this.value)">
+          <option value="indobert" selected>👑 IndoBERT (Monolingual — Model Utama)</option>
+          <option value="bert_multilingual">🌐 BERT Multilingual (Cross-Lingual)</option>
+          <option value="indobert_tweet">🐦 IndoBERT-Tweet (Bahasa Medsos &amp; Slang)</option>
+          <option value="tfidf_logreg">📊 TF-IDF + Logistic Regression (Baseline)</option>
+        </select>
+      </div>
+
+      <div style="font-size:0.78rem;font-weight:700;color:var(--text-muted);margin-bottom:8px;">
+        PILIH CONTOH KASUS PENELITIAN:
+      </div>
+      <div class="presets-grid" id="presets-container"></div>
+
+      <div style="display:flex;justify-content:space-between;font-size:0.84rem;font-weight:700;color:var(--navy-900);margin-bottom:6px;">
+        <span>Input Kalimat Tawaran / Keluhan / Edukasi:</span>
+        <span id="quick-char" style="color:var(--text-dim);font-size:0.74rem;">0 / 5000</span>
+      </div>
+
+      <textarea class="quick-textarea" id="quick-input" maxlength="5000"
+        placeholder="Ketik atau tempel teks pesan SMS pinjol, ancaman sebar data debt collector, atau promosi resmi fintech di sini..."
+        oninput="handleQuickInput()"></textarea>
+
+      <div class="quick-actions-bar">
+        <button class="btn-primary" id="quick-analyze-btn" disabled onclick="runQuickAnalysis()" style="flex:1;">
+          <i class="fa-solid fa-wand-magic-sparkles"></i>
+          <span id="quick-btn-text">Analisis Kalimat dengan Model Terpilih</span>
+          <div class="btn-spinner" id="quick-spinner"></div>
+        </button>
+        <button class="btn-secondary" onclick="clearQuick()">Reset</button>
+      </div>
+
+      <!-- Single Result Presentation -->
+      <div class="single-result-box" id="single-result">
+        <div class="result-status-banner" id="single-banner">
+          <div class="status-icon-circle"><i id="single-icon" class="fa-solid fa-shield-halved"></i></div>
+          <div>
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+              <span style="font-size:0.72rem;text-transform:uppercase;letter-spacing:0.5px;font-weight:700;color:var(--text-muted);">KLASIFIKASI OLEH:</span>
+              <span id="single-model-tag" style="font-size:0.72rem;font-weight:800;background:var(--navy-50);color:var(--navy-800);padding:2px 8px;border-radius:4px;border:1px solid var(--navy-100);">IndoBERT</span>
+            </div>
+            <div class="status-text-title" id="single-label">—</div>
+            <div class="status-sub-desc" id="single-risk">Tingkat Risiko: —</div>
+          </div>
+        </div>
+
+        <div class="single-metrics-3grid">
+          <div class="single-metric-item">
+            <span>Confidence Score</span>
+            <strong id="single-conf">—</strong>
+          </div>
+          <div class="single-metric-item">
+            <span>Probabilitas Legal</span>
+            <strong id="single-prob-legal" style="color:var(--success-green);">—</strong>
+          </div>
+          <div class="single-metric-item">
+            <span>Waktu Inferensi</span>
+            <strong id="single-latency" style="color:var(--navy-800);">—</strong>
+          </div>
+        </div>
+
+        <div style="background:var(--bg-muted);border:1px solid var(--border-light);border-radius:var(--radius-md);padding:14px;">
+          <div style="font-size:0.76rem;font-weight:800;color:var(--navy-800);margin-bottom:8px;">
+            <i class="fa-solid fa-fingerprint"></i> Pola &amp; Indikator Kata Kunci Terdeteksi:
+          </div>
+          <div id="single-tags" style="display:flex;flex-wrap:gap:6px;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═════════════════════════════════════════════════════════════════════════
+       TAB 3: EVALUASI & METRIK MODEL INTERAKTIF (BAR CHARTS PER MODEL)
+       ═════════════════════════════════════════════════════════════════════════ -->
+  <section id="pane-metrics" class="tab-pane">
+    <div class="white-card">
+      <div class="card-heading">
+        <div class="card-heading-title">
+          <i class="fa-solid fa-chart-column"></i> Dashboard Evaluasi Metrik &amp; Grafik Batang Interaktif
+        </div>
+        <span class="format-tag">Evaluasi Komparatif</span>
+      </div>
+
+        <!-- Specific Model Spec Card -->
+        <div class="eval-spec-card" id="eval-spec-card">
+          <div class="eval-spec-title" id="eval-spec-name">
+            <i class="fa-solid fa-crown" style="color:var(--gold-600);"></i>
+            <span>IndoBERT (indobenchmark/indobert-base-p2)</span>
+            <span class="format-tag" id="eval-spec-badge" style="margin-left:auto;background:var(--success-bg);color:var(--success-green);border-color:var(--success-border);">Model Terbaik (Utama)</span>
+          </div>
+          <p id="eval-spec-desc">Model transformer monolingual bahasa Indonesia terlatih khusus. Memiliki representasi semantik paling mendalam untuk menangkap modus terselubung pinjol ilegal.</p>
+          <div class="spec-badges-row">
+            <span class="spec-pill" id="spec-params">Parameters: 124.5M</span>
+            <span class="spec-pill" id="spec-vocab">Vocab: 30,522</span>
+            <span class="spec-pill" id="spec-loss">Val Loss: 0.1698</span>
+            <span class="spec-pill" id="spec-latency">Latency: 18.4 ms</span>
+            <span class="spec-pill" id="spec-throughput">Throughput: 54.3 sample/s</span>
+          </div>
+        </div>
+
+        <!-- Stat Tiles for Selected Model -->
+        <div class="metric-summary-grid" style="margin-bottom:20px;">
+          <div class="summary-metric-card legal">
+            <div class="metric-label-top">Akurasi (Accuracy)</div>
+            <div class="metric-number-big" id="eval-stat-acc" style="color:var(--success-green);">96.60%</div>
+          </div>
+          <div class="summary-metric-card total">
+            <div class="metric-label-top">Precision Macro</div>
+            <div class="metric-number-big" id="eval-stat-prec" style="color:var(--apple-blue);">95.71%</div>
+          </div>
+        <div class="summary-metric-card conf">
+          <div class="metric-label-top">Recall Macro</div>
+          <div class="metric-number-big" id="eval-stat-rec" style="color:var(--gold-700);">95.78%</div>
+        </div>
+        <div class="summary-metric-card total">
+          <div class="metric-label-top">F1-Score Macro</div>
+          <div class="metric-number-big" id="eval-stat-f1" style="color:var(--navy-800);">95.74%</div>
+        </div>
+      </div>
+
+      <!-- Dynamic Bar Charts Grid -->
+      <div class="chart-row-grid">
+        <!-- Chart 1: Performance Metric Bar Chart -->
+        <div class="chart-card-box">
+          <div class="chart-box-title" id="eval-chart1-title"><i class="fa-solid fa-chart-simple"></i> Metrik Kinerja Model: IndoBERT</div>
+          <div class="chart-canvas-container"><canvas id="chart-eval-metrics"></canvas></div>
+        </div>
+        <!-- Chart 2: Confusion Matrix Distribution -->
+        <div class="chart-card-box">
+          <div class="chart-box-title" id="eval-chart2-title"><i class="fa-solid fa-table-cells"></i> Breakdown Confusion Matrix (Total: 1.500 Data)</div>
+          <div class="chart-canvas-container"><canvas id="chart-eval-cm"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Dynamic Bar Charts Grid 2 -->
+      <div class="chart-row-grid">
+        <!-- Chart 3: Class Breakdown (Illegal vs Legal) -->
+        <div class="chart-card-box">
+          <div class="chart-box-title" id="eval-chart3-title"><i class="fa-solid fa-arrows-split-up-and-left"></i> Performa per Kelas: Ilegal vs Legal</div>
+          <div class="chart-canvas-container"><canvas id="chart-eval-class"></canvas></div>
+        </div>
+        <!-- Chart 4: Latency & Loss -->
+        <div class="chart-card-box">
+          <div class="chart-box-title" id="eval-chart4-title"><i class="fa-solid fa-gauge-high"></i> Latensi Inferensi &amp; Efisiensi Komputasi</div>
+          <div class="chart-canvas-container"><canvas id="chart-eval-speed"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Comparison Table -->
+      <div class="data-table-container" style="margin-top:20px;">
+        <div class="data-table-header">
+          <div class="data-table-title"><i class="fa-solid fa-table"></i> Tabel Komparasi Hasil Eksperimen Apel-ke-Apel (Tahap 5)</div>
+        </div>
+        <table class="modern-table">
+          <thead>
+            <tr>
+              <th>Arsitektur Model</th>
+              <th>Accuracy</th>
+              <th>Precision</th>
+              <th>Recall</th>
+              <th>F1-Score</th>
+              <th>Latensi</th>
+              <th>Loss</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="eval-table-body">
+            <tr style="background:var(--success-bg);font-weight:700;">
+              <td><i class="fa-solid fa-crown" style="color:var(--gold-600);margin-right:6px;"></i> IndoBERT (indobenchmark/indobert-base-p2)</td>
+              <td style="color:var(--success-green);">96.60%</td>
+              <td>95.71%</td>
+              <td>95.78%</td>
+              <td>95.74%</td>
+              <td>18.4 ms</td>
+              <td>0.0305</td>
+              <td><span class="badge-tag-legal">Terpilih (Utama)</span></td>
+            </tr>
+            <tr>
+              <td>BERT Multilingual (google-bert/bert-base-multilingual-cased)</td>
+              <td>96.53%</td>
+              <td>95.31%</td>
+              <td>96.11%</td>
+              <td>95.69%</td>
+              <td>25.8 ms</td>
+              <td>0.0412</td>
+              <td><span class="format-tag">Pembanding 1</span></td>
+            </tr>
+            <tr>
+              <td>IndoBERT-Tweet (indolem/indobertweet-base-uncased)</td>
+              <td>95.67%</td>
+              <td>94.06%</td>
+              <td>95.28%</td>
+              <td>94.65%</td>
+              <td>19.1 ms</td>
+              <td>0.0520</td>
+              <td><span class="format-tag">Pembanding 2</span></td>
+            </tr>
+            <tr>
+              <td>TF-IDF + Logistic Regression</td>
+              <td>91.53%</td>
+              <td>88.62%</td>
+              <td>91.16%</td>
+              <td>89.74%</td>
+              <td>1.2 ms</td>
+              <td>0.1850</td>
+              <td><span class="format-tag">Baseline</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p><strong>Aplikasi Cerdas Berbasis Kecerdasan Buatan untuk Deteksi Otomatis Fintech Lending Ilegal di Indonesia</strong></p>
+    <p style="margin-top:4px;color:var(--text-dim);">Penelitian Dosen Pemula (PDP) © 2026 | Engine: PyTorch &amp; Hugging Face Transformers</p>
+  </footer>
+
+</div><!-- /app-container -->
+
+<!-- ═══════════════════════════════════════════════════════════════════════════
+     JAVASCRIPT CONTROLLER (MULTI-MODEL SUPPORT)
+     ═══════════════════════════════════════════════════════════════════════════ -->
+<script>
+Chart.defaults.color = '#475569';
+Chart.defaults.borderColor = '#f1f5f9';
+Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif";
+
+let selectedFile   = null;
+let allResults     = [];
+let chartInstances = {};
+let currentActiveModel = "indobert";
+let metricsDatabase = null;
+
+// ─── Tab Switching ────────────────────────────────────────────────────────────
+function switchTab(id, btn) {
+  document.querySelectorAll('.tab-nav-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  const pane = document.getElementById('pane-' + id);
+  if (pane) pane.classList.add('active');
+  
+  if (id === 'metrics' && (!chartInstances.eval1 || !chartInstances.eval2)) {
+    renderEvaluationModelDashboard(currentActiveModel);
+  }
+}
+
+// ─── Sync Model Selection Across UI ───────────────────────────────────────────
+function syncModelSelection(val) {
+  currentActiveModel = val;
+  const batchSel = document.getElementById('model-select-batch');
+  const quickSel = document.getElementById('model-select-quick');
+  const badge    = document.getElementById('active-model-badge');
+  const chipMod  = document.getElementById('chip-model');
+  
+  if (batchSel) batchSel.value = val;
+  if (quickSel) quickSel.value = val;
+
+  const names = {
+    "indobert":          { short: "Model: IndoBERT",          badge: "IndoBERT (Utama)" },
+    "bert_multilingual": { short: "Model: BERT-Multi",        badge: "BERT Multilingual" },
+    "indobert_tweet":    { short: "Model: IndoBERT-Tweet",    badge: "IndoBERT-Tweet" },
+    "tfidf_logreg":      { short: "Model: TF-IDF LogReg",     badge: "TF-IDF LogReg" }
+  };
+  
+  const m = names[val] || names["indobert"];
+  if (badge)   badge.textContent = m.badge;
+  if (chipMod) chipMod.innerHTML = `<i class="fa-solid fa-brain"></i> ${m.short}`;
+}
+
+// ─── Health Check ─────────────────────────────────────────────────────────────
+async function checkHealth() {
+  try {
+    const r = await fetch('/api/health');
+    const d = await r.json();
+    if (d.status === 'online') {
+      document.getElementById('chip-status').innerHTML = '<i class="fa-solid fa-circle-check"></i> Server Online';
+      document.getElementById('chip-device').innerHTML = `<i class="fa-solid fa-microchip"></i> Hardware: ${(d.device||'CPU').toUpperCase()}`;
+    }
+  } catch (err) {
+    document.getElementById('chip-status').innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Server Offline';
+  }
+}
+
+// ─── Load Presets ─────────────────────────────────────────────────────────────
+async function loadPresets() {
+  try {
+    const r = await fetch('/api/samples');
+    const d = await r.json();
+    const c = document.getElementById('presets-container');
+    if (!c || !d.samples) return;
+    c.innerHTML = '';
+    d.samples.forEach(s => {
+      const isIll = s.expected.toLowerCase().includes('ilegal');
+      const btn = document.createElement('button');
+      btn.className = 'preset-btn';
+      btn.innerHTML = `<span style="color:${isIll?'#dc2626':'#16a34a'};font-weight:800;">${isIll?'[ILEGAL]':'[LEGAL]'}</span> ${s.category}`;
+      btn.onclick = () => {
+        document.getElementById('quick-input').value = s.text;
+        handleQuickInput();
+        document.getElementById('quick-analyze-btn').click();
+      };
+      c.appendChild(btn);
+    });
+  } catch {}
+}
+
+// ─── Load Metrics DB for Tab 3 ────────────────────────────────────────────────
+async function loadMetricsDatabase() {
+  try {
+    const r = await fetch('/api/metrics');
+    metricsDatabase = await r.json();
+    renderEvaluationModelDashboard(currentActiveModel);
+  } catch {}
+}
+
+// ─── Drag & Drop Handlers ─────────────────────────────────────────────────────
+function handleDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('dragover'); }
+function handleDragLeave(e) { document.getElementById('drop-zone').classList.remove('dragover'); }
+function handleDrop(e) {
+  e.preventDefault(); document.getElementById('drop-zone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) setSelectedFile(file);
+}
+function handleFileSelect(e) {
+  const file = e.target.files[0];
+  if (file) setSelectedFile(file);
+}
+function setSelectedFile(file) {
+  selectedFile = file;
+  const alertBox = document.getElementById('file-chosen');
+  document.getElementById('file-chosen-name').textContent = `${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+  alertBox.style.display = 'inline-flex';
+  document.getElementById('btn-analyze-doc').disabled = false;
+}
+
+// ─── Textarea Handlers ────────────────────────────────────────────────────────
+function handleSourceInput() {
+  const textarea = document.getElementById('source-textarea');
+  const v = textarea.value;
+  const len = v.length;
+  const charEl = document.getElementById('source-char');
+  
+  if (len === 0) {
+    charEl.textContent = '0 karakter terdeteksi';
+    document.getElementById('btn-analyze-source').disabled = true;
+    return;
+  }
+  
+  // Optimasi: Hanya cek 500 karakter pertama agar browser tidak freeze pada HTML 18MB+
+  const sample = v.slice(0, 500).toLowerCase();
+  const isHtml = sample.includes('<') || sample.includes('<!doctype') || sample.includes('<html') || sample.includes('<div');
+  
+  if (isHtml) {
+    const kb = Math.round(len / 1024);
+    charEl.innerHTML = `<span style="color:var(--navy-800);font-weight:700;"><i class="fa-solid fa-code" style="color:var(--gold-600);"></i> Kode HTML Terdeteksi (${kb.toLocaleString()} KB / ${len.toLocaleString()} karakter) — Siap diekstrak!</span>`;
+  } else {
+    charEl.textContent = len.toLocaleString() + ' karakter terdeteksi';
+  }
+  document.getElementById('btn-analyze-source').disabled = len < 10;
+}
+
+// ─── Paste HTML from Clipboard Helper (Ultra-Fast & Responsive) ───────────────
+async function pasteFromClipboard() {
+  const textarea = document.getElementById('source-textarea');
+  const pasteBtn = document.querySelector('.btn-paste-clipboard');
+  
+  try {
+    if (pasteBtn) pasteBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menempelkan...';
+    
+    const text = await navigator.clipboard.readText();
+    if (!text || !text.trim()) {
+      alert('Clipboard kosong atau tidak berisi teks HTML.');
+      if (pasteBtn) pasteBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Tempel dari Clipboard';
+      return;
+    }
+    
+    // Set value langsung ke DOM
+    textarea.value = text;
+    handleSourceInput();
+    
+    if (pasteBtn) {
+      pasteBtn.innerHTML = '<i class="fa-solid fa-check" style="color:#16a34a;"></i> Berhasil Ditempel!';
+      setTimeout(() => {
+        pasteBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Tempel dari Clipboard';
+      }, 1500);
+    }
+  } catch (err) {
+    if (pasteBtn) pasteBtn.innerHTML = '<i class="fa-solid fa-paste"></i> Tempel dari Clipboard';
+    textarea.focus();
+    alert('Izin membaca clipboard dibatasi oleh browser. Silakan klik pada kolom teks lalu tekan Ctrl + V.');
+  }
+}
+
+function handleQuickInput() {
+  const v = document.getElementById('quick-input').value;
+  document.getElementById('quick-char').textContent = v.length + ' / 5000';
+  document.getElementById('quick-analyze-btn').disabled = v.trim().length < 3;
+}
+function clearQuick() {
+  document.getElementById('quick-input').value = '';
+  handleQuickInput();
+  document.getElementById('single-result').style.display = 'none';
+}
+
+// ─── Progress Animation Helpers ───────────────────────────────────────────────
+function showProgress() {
+  document.getElementById('progress-section').style.display = 'block';
+  document.getElementById('results-section').style.display  = 'none';
+  setProgress(0, 'Mempersiapkan pipeline...', '', '');
+  setStep(1);
+}
+function hideProgress() { document.getElementById('progress-section').style.display = 'none'; }
+function showResults() {
+  document.getElementById('results-section').style.display = 'block';
+  document.getElementById('results-section').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function setProgress(pct, title, status, counter) {
+  const bar = document.getElementById('progress-bar-fill') || document.getElementById('progress-bar-inner');
+  if (bar) bar.style.width = pct + '%';
+  const pctEl = document.getElementById('progress-pct-text');
+  if (pctEl) pctEl.textContent = Math.round(pct) + '%';
+  if (title) {
+    const tEl = document.getElementById('progress-title');
+    if (tEl) tEl.textContent = title;
+  }
+  if (status) {
+    const sEl = document.getElementById('progress-status');
+    if (sEl) sEl.textContent = status;
+  }
+  if (counter) {
+    const cEl = document.getElementById('progress-counter');
+    if (cEl) cEl.textContent = counter;
+  }
+}
+function setStep(n) {
+  [1,2,3,4].forEach(i => {
+    const el = document.getElementById('step-' + i);
+    el.className = 'timeline-step';
+    if (i < n)  el.classList.add('done');
+    if (i === n) el.classList.add('active');
+  });
+  [1,2,3].forEach(i => {
+    const line = document.getElementById('line-' + i);
+    line.style.background = i < n ? 'var(--success-green)' : 'var(--border-light)';
+  });
+}
+
+// ─── Batch Inference with Model Selection ─────────────────────────────────────
+async function batchAnalyzeWithProgress(sentences, startPct, endPct, modelType) {
+  const results = [];
+  const total   = sentences.length;
+  const CHUNK   = 30;
+
+  for (let i = 0; i < total; i += CHUNK) {
+    const chunk = sentences.slice(i, i + CHUNK);
+    const pct   = startPct + ((i / total) * (endPct - startPct));
+    setProgress(pct,
+      `Inferensi ${modelType.toUpperCase()} Berlangsung...`,
+      `Mengklasifikasi kalimat ${Math.min(i + CHUNK, total)} dari ${total}...`,
+      `[${i+1}–${Math.min(i+CHUNK, total)} / ${total} kalimat] — Engine: ${modelType}`
+    );
+
+    const res = await fetch('/api/batch-predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ texts: chunk, model_type: modelType })
+    });
+    if (!res.ok) throw new Error('Batch predict gagal');
+    const data = await res.json();
+    results.push(...(data.results || []));
+  }
+  return results;
+}
+
+// ─── Document Analysis Flow ───────────────────────────────────────────────────
+async function runDocumentAnalysis() {
+  if (!selectedFile) return;
+  const modelType = currentActiveModel;
+  const btn     = document.getElementById('btn-analyze-doc');
+  const btnText = document.getElementById('btn-analyze-doc-text');
+  const spinner = document.getElementById('spinner-doc');
+  btn.disabled = true; btnText.textContent = 'Mengekstrak Dokumen...'; spinner.style.display = 'block';
+
+  showProgress();
+  setStep(1);
+  setProgress(5, 'Mengunggah & Mengekstrak Dokumen...', `Membaca struktur isi ${selectedFile.name}...`, '');
+
+  try {
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    const r1 = await fetch('/api/upload-document', { method: 'POST', body: formData });
+    if (!r1.ok) { const e = await r1.json(); throw new Error(e.detail || 'Upload gagal'); }
+    const extracted = await r1.json();
+
+    if (!extracted.sentences || extracted.sentences.length === 0) {
+      throw new Error('Tidak ada baris teks bermakna yang dapat diekstrak.');
+    }
+
+    setStep(2);
+    setProgress(20, 'Segmentasi Kalimat Selesai',
+      `Berhasil mengekstrak ${extracted.total} baris teks dari file.`,
+      `Tipe: ${extracted.source_type.toUpperCase()} | Total: ${extracted.total} teks`
+    );
+    await delay(350);
+
+    setStep(3);
+    allResults = await batchAnalyzeWithProgress(extracted.sentences, 25, 92, modelType);
+
+    setStep(4);
+    setProgress(96, 'Merender Visualisasi Grafik...', 'Menghitung distribusi klasifikasi...', '');
+    await delay(350);
+    setProgress(100, 'Selesai! ✅', `Berhasil memproses ${allResults.length} sampel teks dengan ${modelType.toUpperCase()}.`, '');
+    await delay(350);
+
+    hideProgress();
+    renderBatchResults(allResults, modelType);
+    showResults();
+
+  } catch (err) {
+    alert('Gagal: ' + err.message);
+    hideProgress();
+  } finally {
+    btn.disabled = false; btnText.textContent = 'Mulai Analisis Dokumen'; spinner.style.display = 'none';
+  }
+}
+
+// ─── Web Scraper & HTML Analysis Flow ─────────────────────────────────────────
+async function runSourceAnalysis() {
+  const rawText = document.getElementById('source-textarea').value.trim();
+  if (rawText.length < 10) return;
+  const modelType = currentActiveModel;
+
+  const btn     = document.getElementById('btn-analyze-source');
+  const btnText = document.getElementById('btn-analyze-source-text');
+  const spinner = document.getElementById('spinner-source');
+  btn.disabled = true; btnText.textContent = 'Mengekstrak HTML...'; spinner.style.display = 'block';
+
+  // Fast O(1) sampling to prevent UI thread lock
+  const sample = rawText.slice(0, 500).toLowerCase();
+  const isHtml = sample.includes('<') || sample.includes('<!doctype') || sample.includes('<html');
+  const sizeKb = Math.round(rawText.length / 1024);
+
+  showProgress();
+  setStep(1);
+
+  if (isHtml) {
+    setProgress(12, 'Mengekstrak Konten dari Salinan HTML...', `Mem-parse ${sizeKb.toLocaleString()} KB struktur DOM & membersihkan skrip...`, `Ukuran HTML: ${sizeKb} KB`);
+  } else {
+    setProgress(12, 'Memfilter Teks Scraped...', 'Memisahkan ulasan/postingan...', `Format: Plain Text (${rawText.length} karakter)`);
+  }
+
+  // Smooth pulse timer while waiting for network response
+  let stepPct = 12;
+  const timer = setInterval(() => {
+    if (stepPct < 22) {
+      stepPct += 2;
+      setProgress(stepPct, isHtml ? 'Mengekstrak Paragraf & Postingan Media Sosial...' : 'Menyiapkan Segmentasi Kalimat...', 'Menghilangkan tag HTML dan elemen navigasi...', '');
+    }
+  }, 200);
+
+  try {
+    const r1 = await fetch('/api/extract-sentences', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: rawText, model_type: modelType })
+    });
+
+    clearInterval(timer);
+
+    if (!r1.ok) {
+      const err = await r1.json();
+      throw new Error(err.detail || 'Ekstraksi teks dari HTML gagal');
+    }
+
+    const extracted = await r1.json();
+
+    if (!extracted.sentences || extracted.sentences.length === 0) {
+      throw new Error('Tidak ditemukan teks postingan atau kalimat yang dapat diekstrak dari salinan HTML ini. Pastikan Anda menyalin halaman yang memuat postingan atau ulasan.');
+    }
+
+    setStep(2);
+    setProgress(25, 'Ekstraksi & Segmentasi HTML Selesai! ✅',
+      `Berhasil mengekstrak ${extracted.total} sampel ulasan/postingan bersih dari salinan HTML.`,
+      `Total: ${extracted.total} kalimat siap diuji`
+    );
+    await delay(350);
+
+    setStep(3);
+    allResults = await batchAnalyzeWithProgress(extracted.sentences, 28, 92, modelType);
+
+    setStep(4);
+    setProgress(96, 'Menyusun Visualisasi Grafik & Tabel...', 'Menghitung statistik akurasi...', '');
+    await delay(350);
+    setProgress(100, 'Analisis Selesai! ✅', `Berhasil mengklasifikasikan ${allResults.length} ulasan dari HTML menggunakan model ${modelType.toUpperCase()}.`, `Total: ${allResults.length} data`);
+    await delay(350);
+
+    hideProgress();
+    renderBatchResults(allResults, modelType);
+    showResults();
+
+  } catch (err) {
+    clearInterval(timer);
+    alert('Pemberitahuan Analisis: ' + err.message);
+    hideProgress();
+  } finally {
+    btn.disabled = false;
+    btnText.textContent = 'Ekstrak & Analisis Salinan HTML';
+    spinner.style.display = 'none';
+  }
+}
+
+// ─── Single Quick Analysis ────────────────────────────────────────────────────
+async function runQuickAnalysis() {
+  const text = document.getElementById('quick-input').value.trim();
+  if (text.length < 3) return;
+  const modelType = currentActiveModel;
+
+  const btn     = document.getElementById('quick-analyze-btn');
+  const btnText = document.getElementById('quick-btn-text');
+  const spinner = document.getElementById('quick-spinner');
+  btn.disabled = true; btnText.textContent = 'Menganalisis...'; spinner.style.display = 'block';
+  document.getElementById('single-result').style.display = 'none';
+
+  try {
+    const r = await fetch('/api/predict', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, model_type: modelType })
+    });
+    if (!r.ok) throw new Error('Inferensi gagal');
+    const d = await r.json();
+    renderSingleResult(d);
+  } catch (err) {
+    alert('Error: ' + err.message);
+  } finally {
+    btn.disabled = false; btnText.textContent = 'Analisis Kalimat dengan Model Terpilih'; spinner.style.display = 'none';
+  }
+}
+
+function renderSingleResult(d) {
+  const panel  = document.getElementById('single-result');
+  const banner = document.getElementById('single-banner');
+  const isIll  = d.label === 1;
+  const confPct = (d.confidence * 100).toFixed(1);
+
+  banner.className = 'result-status-banner ' + (isIll ? 'danger' : 'success');
+  document.getElementById('single-icon').className = `fa-solid ${isIll ? 'fa-triangle-exclamation' : 'fa-shield-halved'}`;
+  document.getElementById('single-label').textContent = d.label_name?.toUpperCase() || '—';
+  document.getElementById('single-risk').textContent  = 'Tingkat Risiko: ' + (d.risk_level || '—');
+  document.getElementById('single-conf').textContent  = confPct + '%';
+  document.getElementById('single-prob-legal').textContent = ((d.probabilities?.legal||0)*100).toFixed(1) + '%';
+  document.getElementById('single-latency').textContent    = (d.prediction_time_sec||0).toFixed(3) + ' s';
+  document.getElementById('single-model-tag').textContent  = `${d.model_short || d.model_used}`;
+
+  const tags = document.getElementById('single-tags');
+  tags.innerHTML = '';
+  (d.patterns?.illegal_flags||[]).forEach(f => {
+    tags.innerHTML += `<span class="badge-tag-illegal"><i class="fa-solid fa-triangle-exclamation"></i> "${f}"</span>`;
+  });
+  (d.patterns?.legal_flags||[]).forEach(f => {
+    tags.innerHTML += `<span class="badge-tag-legal"><i class="fa-solid fa-check"></i> "${f}"</span>`;
+  });
+  if (d.patterns?.has_phone_number) tags.innerHTML += `<span class="format-tag"><i class="fa-solid fa-phone"></i> Kontak HP</span>`;
+  if (d.patterns?.has_external_link) tags.innerHTML += `<span class="format-tag"><i class="fa-solid fa-link"></i> Link Download</span>`;
+  if (!tags.innerHTML) tags.innerHTML = `<span style="font-size:0.78rem;color:var(--text-muted);">Pola representasi kontekstual model ${d.model_short}.</span>`;
+
+  panel.style.display = 'block';
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ─── Render Batch Results ─────────────────────────────────────────────────────
+function renderBatchResults(results, modelType) {
+  const illegal = results.filter(r => r.label === 1);
+  const legal   = results.filter(r => r.label === 0);
+  const total   = results.length || 1;
+  const avgConf = results.length ? (results.reduce((s,r)=>s+r.confidence,0)/results.length*100).toFixed(1) : 0;
+  const illegalPct = ((illegal.length / total) * 100).toFixed(1);
+  const legalPct   = ((legal.length / total) * 100).toFixed(1);
+
+  document.getElementById('res-total').textContent   = results.length.toLocaleString();
+  document.getElementById('res-illegal').textContent = illegal.length.toLocaleString();
+  document.getElementById('res-legal').textContent   = legal.length.toLocaleString();
+  document.getElementById('res-avgconf').textContent = avgConf + '%';
+  document.getElementById('result-model-badge').textContent = `Model: ${modelType.toUpperCase()}`;
+
+  // Update 3-Card Insights & Badges
+  if (document.getElementById('donut-badge-pct'))   document.getElementById('donut-badge-pct').textContent   = `${illegalPct}% Ilegal`;
+  if (document.getElementById('donut-illegal-txt')) document.getElementById('donut-illegal-txt').textContent = `${illegal.length} (${illegalPct}%)`;
+  if (document.getElementById('donut-legal-txt'))   document.getElementById('donut-legal-txt').textContent   = `${legal.length} (${legalPct}%)`;
+
+  if (document.getElementById('hbar-badge-total')) document.getElementById('hbar-badge-total').textContent = `${results.length} Data Teruji`;
+  if (document.getElementById('hbar-ratio-txt'))   document.getElementById('hbar-ratio-txt').textContent   = `${illegal.length} Ilegal vs ${legal.length} Legal`;
+
+  // Destroy batch charts
+  ['donut', 'hbar', 'model', 'confDist'].forEach(k => { if (chartInstances[k]) chartInstances[k].destroy(); });
+
+  // 1. Donut Chart (Proporsi Klasifikasi)
+  chartInstances.donut = new Chart(document.getElementById('chart-donut'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Fintech Ilegal / Bermasalah', 'Fintech Legal / Netral'],
+      datasets: [{
+        data: [illegal.length, legal.length],
+        backgroundColor: ['#dc2626', '#16a34a'],
+        hoverBackgroundColor: ['#b91c1c', '#15803d'],
+        borderColor: ['#ffffff', '#ffffff'],
+        borderWidth: 3,
+        hoverOffset: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '68%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#334155', font: { weight: '600', size: 11 }, padding: 12 }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              const val = ctx.raw || 0;
+              const pct = ((val / total) * 100).toFixed(1);
+              return ` ${ctx.label}: ${val} kalimat (${pct}%)`;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  // 2. Horizontal Bar (Distribusi Teks per Kategori)
+  chartInstances.hbar = new Chart(document.getElementById('chart-hbar'), {
+    type: 'bar',
+    data: {
+      labels: ['Ilegal / Ancaman', 'Legal / Edukasi'],
+      datasets: [{
+        label: 'Jumlah Sampel',
+        data: [illegal.length, legal.length],
+        backgroundColor: ['#dc2626', '#16a34a'],
+        hoverBackgroundColor: ['#b91c1c', '#15803d'],
+        borderRadius: 8
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` Jumlah: ${ctx.raw} sampel (${((ctx.raw/total)*100).toFixed(1)}%)`
+          }
+        }
+      },
+      scales: {
+        x: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#64748b', font: { size: 10 } } },
+        y: { grid: { display: false }, ticks: { color: '#0f172a', font: { weight: '700', size: 11 } } }
+      }
+    }
+  });
+
+  // 3. Confidence Bins (Distribusi Skor Keyakinan)
+  const bins = [0, 0, 0, 0];
+  results.forEach(r => {
+    const c = r.confidence * 100;
+    if (c < 50) bins[0]++; else if (c < 70) bins[1]++; else if (c < 90) bins[2]++; else bins[3]++;
+  });
+
+  if (document.getElementById('conf-badge-avg')) document.getElementById('conf-badge-avg').textContent = `Rata-rata ${avgConf}%`;
+  const highConfPct = ((bins[3] / total) * 100).toFixed(0);
+  if (document.getElementById('conf-high-txt')) document.getElementById('conf-high-txt').textContent = `${bins[3]} data (${highConfPct}%) di 90–100%`;
+
+  chartInstances.confDist = new Chart(document.getElementById('chart-conf-dist'), {
+    type: 'bar',
+    data: {
+      labels: ['< 50%', '50–70%', '70–90%', '90–100%'],
+      datasets: [{
+        label: 'Jumlah Kalimat',
+        data: bins,
+        backgroundColor: ['#ef4444', '#f59e0b', '#3b82f6', '#16a34a'],
+        hoverBackgroundColor: ['#dc2626', '#d97706', '#2563eb', '#15803d'],
+        borderRadius: 8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ` ${ctx.raw} sampel (${((ctx.raw/total)*100).toFixed(1)}%)`
+          }
+        }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { precision: 0, color: '#64748b', font: { size: 10 } } },
+        x: { ticks: { color: '#0f172a', font: { weight: '700', size: 10.5 } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Render Table with Pagination & Filtering System (No more 500-row limit!)
+  currentTablePage = 1;
+  renderCurrentTablePage();
+}
+
+// ─── Table Pagination & Filtering Controller ─────────────────────────────────
+let currentTableFilter = 'all'; // 'all', 'illegal', 'legal'
+let currentTablePage = 1;
+let currentTablePageSize = 100; // 50, 100, 250, Infinity
+
+function filterTable(filterType, btnEl) {
+  currentTableFilter = filterType;
+  currentTablePage = 1;
+  document.querySelectorAll('.tbl-filter-btn').forEach(b => b.classList.remove('active'));
+  if (btnEl) btnEl.classList.add('active');
+  renderCurrentTablePage();
+}
+
+function changePageSize(size) {
+  currentTablePageSize = size === 'all' ? Infinity : parseInt(size, 10);
+  currentTablePage = 1;
+  renderCurrentTablePage();
+}
+
+function changePage(deltaOrPage) {
+  if (typeof deltaOrPage === 'number') {
+    currentTablePage += deltaOrPage;
+  } else if (typeof deltaOrPage === 'string') {
+    currentTablePage = parseInt(deltaOrPage, 10);
+  }
+  renderCurrentTablePage();
+}
+
+function getFilteredResults() {
+  if (currentTableFilter === 'illegal') {
+    return allResults.filter(r => r.label === 1);
+  } else if (currentTableFilter === 'legal') {
+    return allResults.filter(r => r.label === 0);
+  }
+  return allResults;
+}
+
+function renderCurrentTablePage() {
+  const filtered = getFilteredResults();
+  const total = filtered.length;
+  const tbody = document.getElementById('result-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  const pageSize = currentTablePageSize;
+  const totalPages = Math.ceil(total / pageSize) || 1;
+  currentTablePage = Math.max(1, Math.min(currentTablePage, totalPages));
+
+  const startIdx = (currentTablePage - 1) * pageSize;
+  const endIdx = pageSize === Infinity ? total : Math.min(startIdx + pageSize, total);
+  const pageItems = filtered.slice(startIdx, endIdx);
+
+  // Update counts on filter pills
+  const illegalCount = allResults.filter(r => r.label === 1).length;
+  const legalCount   = allResults.filter(r => r.label === 0).length;
+  if (document.getElementById('count-filter-all'))     document.getElementById('count-filter-all').textContent     = allResults.length.toLocaleString();
+  if (document.getElementById('count-filter-illegal')) document.getElementById('count-filter-illegal').textContent = illegalCount.toLocaleString();
+  if (document.getElementById('count-filter-legal'))   document.getElementById('count-filter-legal').textContent   = legalCount.toLocaleString();
+
+  document.getElementById('table-count').textContent = `${total.toLocaleString()} baris total`;
+  const infoEl = document.getElementById('pagination-info');
+  if (infoEl) {
+    if (total === 0) {
+      infoEl.textContent = 'Tidak ada baris data yang cocok dengan filter.';
+    } else if (pageSize === Infinity || total <= pageSize) {
+      infoEl.textContent = `Menampilkan seluruh ${total.toLocaleString()} baris`;
+    } else {
+      infoEl.textContent = `Menampilkan baris ${startIdx + 1}–${endIdx} dari total ${total.toLocaleString()} baris`;
+    }
+  }
+
+  pageItems.forEach((r, idx) => {
+    const globalNo = startIdx + idx + 1;
+    const isIll = r.label === 1;
+    const confPct = (r.confidence * 100).toFixed(1);
+    const fillWidth = Math.min(100, Math.max(15, r.confidence * 100));
+    const fillColor = isIll ? '#dc2626' : '#16a34a';
+
+    tbody.innerHTML += `
+      <tr>
+        <td style="color:var(--text-dim);font-family:var(--font-mono);font-size:0.76rem;">${globalNo}</td>
+        <td style="max-width:380px;font-size:0.83rem;line-height:1.45;" title="${(r.text||'').replace(/"/g,'&quot;')}">
+          ${(r.text||'—').replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+        </td>
+        <td><span class="format-tag">${r.model_short || r.model_used || currentActiveModel}</span></td>
+        <td>
+          <span class="${isIll ? 'badge-tag-illegal' : 'badge-tag-legal'}">
+            ${isIll ? '🚨 ILEGAL' : '✅ LEGAL'}
+          </span>
+        </td>
+        <td>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <div style="flex:1;height:5px;background:var(--border-light);border-radius:3px;overflow:hidden;">
+              <div style="width:${fillWidth}%;height:100%;background:${fillColor};border-radius:3px;"></div>
+            </div>
+            <span style="font-family:var(--font-mono);font-size:0.76rem;font-weight:700;color:var(--navy-900);min-width:42px;text-align:right;">
+              ${confPct}%
+            </span>
+          </div>
+        </td>
+        <td style="font-family:var(--font-mono);font-size:0.74rem;color:var(--text-muted);">
+          ${(r.prediction_time_sec||0).toFixed(3)}s
+        </td>
+      </tr>
+    `;
+  });
+
+  // Render pagination controls
+  const controlsEl = document.getElementById('pagination-controls');
+  if (controlsEl) {
+    if (pageSize === Infinity || totalPages <= 1) {
+      controlsEl.innerHTML = '';
+    } else {
+      let html = `<button class="page-btn" onclick="changePage(-1)" ${currentTablePage === 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i></button>`;
+      
+      const startP = Math.max(1, currentTablePage - 2);
+      const endP   = Math.min(totalPages, currentTablePage + 2);
+      
+      if (startP > 1) html += `<button class="page-btn" onclick="changePage(${1 - currentTablePage})">1</button>`;
+      if (startP > 2) html += `<span style="padding:0 4px;color:var(--text-dim);">…</span>`;
+
+      for (let p = startP; p <= endP; p++) {
+        html += `<button class="page-btn ${p === currentTablePage ? 'active' : ''}" onclick="changePage(${p - currentTablePage})">${p}</button>`;
+      }
+
+      if (endP < totalPages - 1) html += `<span style="padding:0 4px;color:var(--text-dim);">…</span>`;
+      if (endP < totalPages) html += `<button class="page-btn" onclick="changePage(${totalPages - currentTablePage})">${totalPages}</button>`;
+
+      html += `<button class="page-btn" onclick="changePage(1)" ${currentTablePage === totalPages ? 'disabled' : ''}><i class="fa-solid fa-chevron-right"></i></button>`;
+      controlsEl.innerHTML = html;
+    }
+  }
+}
+
+// ─── TAB 3: MODEL EVALUATION BAR CHARTS CONTROLLER ────────────────────────────
+function selectEvaluationModel(modelKey, btn) {
+  document.querySelectorAll('.model-pill-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderEvaluationModelDashboard(modelKey);
+}
+
+function renderEvaluationModelDashboard(modelKey) {
+  if (!metricsDatabase || !metricsDatabase.models_data) return;
+
+  // Clean old evaluation charts
+  ['eval1', 'eval2', 'eval3', 'eval4'].forEach(k => { if (chartInstances[k]) chartInstances[k].destroy(); });
+
+  if (modelKey === 'all_comparison') {
+    renderAllModelsComparisonView();
+    return;
+  }
+
+  const data = metricsDatabase.models_data[modelKey] || metricsDatabase.models_data['indobert'];
+
+  // Update Spec Card & Stat Tiles
+  document.getElementById('eval-spec-name').innerHTML = `
+    <i class="fa-solid ${modelKey==='indobert'?'fa-crown':'fa-microchip'}" style="color:${modelKey==='indobert'?'var(--gold-600)':'var(--navy-700)'};"></i>
+    <span>${data.name}</span>
+    <span class="format-tag" style="margin-left:auto;background:var(--navy-50);color:var(--navy-800);">${data.badge}</span>
+  `;
+  document.getElementById('eval-spec-desc').textContent = data.description;
+  document.getElementById('spec-params').textContent     = `Params: ${data.parameters}`;
+  document.getElementById('spec-vocab').textContent      = `Vocab: ${data.vocab_size}`;
+  document.getElementById('spec-loss').textContent       = `Loss: ${data.validation_loss}`;
+  document.getElementById('spec-latency').textContent    = `Latency: ${data.latency_ms} ms`;
+  document.getElementById('spec-throughput').textContent = `Throughput: ${data.throughput_samples_sec} sample/s`;
+
+  document.getElementById('eval-stat-acc').textContent  = `${data.accuracy.toFixed(2)}%`;
+  document.getElementById('eval-stat-prec').textContent = `${data.precision.toFixed(2)}%`;
+  document.getElementById('eval-stat-rec').textContent  = `${data.recall.toFixed(2)}%`;
+  document.getElementById('eval-stat-f1').textContent   = `${data.f1_score.toFixed(2)}%`;
+
+  // Chart 1: Performance Bar Chart
+  document.getElementById('eval-chart1-title').innerHTML = `<i class="fa-solid fa-chart-simple"></i> Metrik Kinerja Model: ${data.short_name}`;
+  chartInstances.eval1 = new Chart(document.getElementById('chart-eval-metrics'), {
+    type: 'bar',
+    data: {
+      labels: ['Accuracy', 'Precision', 'Recall', 'F1-Score'],
+      datasets: [{
+        label: 'Nilai (%)',
+        data: [data.accuracy, data.precision, data.recall, data.f1_score],
+        backgroundColor: ['#1e3a8a', '#2563eb', '#d97706', '#16a34a'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed.y}%` } }
+      },
+      scales: {
+        y: { min: 80, max: 100, ticks: { callback: v => v + '%', color: '#64748b' }, grid: { color: '#f1f5f9' } },
+        x: { ticks: { color: '#0f172a', font: { weight: '700' } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Chart 2: Confusion Matrix Bar Chart (TP, TN, FP, FN)
+  const cm = data.confusion_matrix;
+  document.getElementById('eval-chart2-title').innerHTML = `<i class="fa-solid fa-table-cells"></i> Breakdown Confusion Matrix (Total: ${cm.total} Data)`;
+  chartInstances.eval2 = new Chart(document.getElementById('chart-eval-cm'), {
+    type: 'bar',
+    data: {
+      labels: ['True Positive (Ilegal Benar)', 'True Negative (Legal Benar)', 'False Positive (Salah Ilegal)', 'False Negative (Ilegal Lolos)'],
+      datasets: [{
+        label: 'Jumlah Kasus',
+        data: [cm.tp, cm.tn, cm.fp, cm.fn],
+        backgroundColor: ['#16a34a', '#2563eb', '#f59e0b', '#dc2626'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.parsed.y} sampel (${(ctx.parsed.y/cm.total*100).toFixed(1)}%)` } }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } },
+        x: { ticks: { color: '#0f172a', font: { size: 10, weight: '600' } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Chart 3: Class Breakdown (Precision, Recall, F1 for Illegal vs Legal)
+  const cls = data.class_metrics;
+  document.getElementById('eval-chart3-title').innerHTML = `<i class="fa-solid fa-arrows-split-up-and-left"></i> Performa per Kelas: Ilegal vs Legal`;
+  chartInstances.eval3 = new Chart(document.getElementById('chart-eval-class'), {
+    type: 'bar',
+    data: {
+      labels: ['Precision', 'Recall', 'F1-Score'],
+      datasets: [
+        { label: 'Kelas Ilegal (1)', data: [cls.illegal.precision, cls.illegal.recall, cls.illegal.f1], backgroundColor: '#dc2626', borderRadius: 4 },
+        { label: 'Kelas Legal (0)',   data: [cls.legal.precision,   cls.legal.recall,   cls.legal.f1],   backgroundColor: '#16a34a', borderRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: { min: 85, max: 100, ticks: { callback: v => v + '%', color: '#64748b' }, grid: { color: '#f1f5f9' } },
+        x: { ticks: { color: '#0f172a', font: { weight: '700' } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Chart 4: Latency & Loss Comparison Bar
+  document.getElementById('eval-chart4-title').innerHTML = `<i class="fa-solid fa-gauge-high"></i> Latensi Inferensi &amp; Training Loss`;
+  chartInstances.eval4 = new Chart(document.getElementById('chart-eval-speed'), {
+    type: 'bar',
+    data: {
+      labels: ['Latensi (ms/teks)', 'Training Loss (x100)', 'Validation Loss (x100)'],
+      datasets: [{
+        data: [data.latency_ms, data.training_loss * 100, data.validation_loss * 100],
+        backgroundColor: ['#d97706', '#64748b', '#1e3a8a'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, ticks: { color: '#64748b' } },
+        x: { ticks: { color: '#0f172a', font: { size: 11, weight: '700' } }, grid: { display: false } }
+      }
+    }
+  });
+}
+
+function renderAllModelsComparisonView() {
+  document.getElementById('eval-spec-name').innerHTML = `
+    <i class="fa-solid fa-scale-balanced" style="color:var(--navy-700);"></i>
+    <span>Komparasi Apel-ke-Apel 4 Arsitektur Model</span>
+    <span class="format-tag" style="margin-left:auto;background:var(--navy-50);color:var(--navy-800);">Tahap 5 Evaluasi</span>
+  `;
+  document.getElementById('eval-spec-desc').textContent = "Perbandingan kuantitatif seluruh model yang diuji dalam penelitian (IndoBERT, BERT Multilingual, IndoBERT-Tweet, dan TF-IDF Baseline) pada dataset uji terstandarisasi 1.500 sampel.";
+  document.getElementById('spec-params').textContent     = "4 Model Diuji";
+  document.getElementById('spec-vocab').textContent      = "Metrik Multi-Dimensi";
+  document.getElementById('spec-loss').textContent       = "Model Terbaik: IndoBERT";
+  document.getElementById('spec-latency').textContent    = "Rentang: 1.2ms – 25.8ms";
+  document.getElementById('spec-throughput').textContent = "Data Uji: 1.500 Sampel";
+
+  document.getElementById('eval-stat-acc').textContent  = "96.60% 👑";
+  document.getElementById('eval-stat-prec').textContent = "95.71%";
+  document.getElementById('eval-stat-rec').textContent  = "95.78%";
+  document.getElementById('eval-stat-f1').textContent   = "95.74%";
+
+  // Chart 1: Grouped Bar Accuracy & F1
+  document.getElementById('eval-chart1-title').innerHTML = `<i class="fa-solid fa-chart-column"></i> Perbandingan Akurasi &amp; F1-Score (4 Model)`;
+  chartInstances.eval1 = new Chart(document.getElementById('chart-eval-metrics'), {
+    type: 'bar',
+    data: {
+      labels: ['IndoBERT', 'BERT-Multi', 'IndoBERT-Tweet', 'TF-IDF LogReg'],
+      datasets: [
+        { label: 'Accuracy (%)',  data: [96.60, 96.53, 95.67, 91.53], backgroundColor: '#1e3a8a', borderRadius: 4 },
+        { label: 'F1-Score (%)',  data: [95.74, 95.69, 94.65, 89.74], backgroundColor: '#16a34a', borderRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: { min: 85, max: 100, ticks: { callback: v => v + '%' } },
+        x: { ticks: { color: '#0f172a', font: { weight: '700' } } }
+      }
+    }
+  });
+
+  // Chart 2: Precision vs Recall
+  document.getElementById('eval-chart2-title').innerHTML = `<i class="fa-solid fa-scale-balanced"></i> Precision vs Recall (4 Model)`;
+  chartInstances.eval2 = new Chart(document.getElementById('chart-eval-cm'), {
+    type: 'bar',
+    data: {
+      labels: ['IndoBERT', 'BERT-Multi', 'IndoBERT-Tweet', 'TF-IDF LogReg'],
+      datasets: [
+        { label: 'Precision (%)', data: [95.71, 95.31, 94.06, 88.62], backgroundColor: '#2563eb', borderRadius: 4 },
+        { label: 'Recall (%)',    data: [95.78, 96.11, 95.28, 91.16], backgroundColor: '#d97706', borderRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: { min: 85, max: 100, ticks: { callback: v => v + '%' } },
+        x: { ticks: { color: '#0f172a', font: { weight: '700' } } }
+      }
+    }
+  });
+
+  // Chart 3: Error Rate (False Positives & False Negatives)
+  document.getElementById('eval-chart3-title').innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Tingkat Kesalahan (FP &amp; FN) per Model`;
+  chartInstances.eval3 = new Chart(document.getElementById('chart-eval-class'), {
+    type: 'bar',
+    data: {
+      labels: ['IndoBERT', 'BERT-Multi', 'IndoBERT-Tweet', 'TF-IDF LogReg'],
+      datasets: [
+        { label: 'Salah Tuduh Ilegal (FP)', data: [21, 26, 35, 78], backgroundColor: '#f59e0b', borderRadius: 4 },
+        { label: 'Ilegal Lolos (FN)',       data: [30, 26, 30, 49], backgroundColor: '#dc2626', borderRadius: 4 },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: { beginAtZero: true, ticks: { precision: 0 } },
+        x: { ticks: { color: '#0f172a', font: { weight: '700' } } }
+      }
+    }
+  });
+
+  // Chart 4: Latency Comparison
+  document.getElementById('eval-chart4-title').innerHTML = `<i class="fa-solid fa-gauge-high"></i> Latensi Inferensi Komparatif (ms/kalimat)`;
+  chartInstances.eval4 = new Chart(document.getElementById('chart-eval-speed'), {
+    type: 'bar',
+    data: {
+      labels: ['IndoBERT', 'BERT-Multi', 'IndoBERT-Tweet', 'TF-IDF LogReg'],
+      datasets: [{
+        label: 'Latensi (ms)',
+        data: [18.4, 25.8, 19.1, 1.2],
+        backgroundColor: ['#1e3a8a', '#2563eb', '#64748b', '#16a34a'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: { beginAtZero: true, ticks: { callback: v => v + ' ms' } },
+        x: { ticks: { color: '#0f172a', font: { weight: '700' } } }
+      }
+    }
+  });
+}
+
+// ─── Export CSV Berformat Rapi (UTF-8 BOM untuk Microsoft Excel & Google Sheets) ──
+function downloadCSV() {
+  if (!allResults || !allResults.length) {
+    alert('Tidak ada data hasil analisis untuk diekspor ke CSV.');
+    return;
+  }
+
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0, 10);
+
+  // Header Kolom Standar Riset
+  const headers = [
+    'No',
+    'Teks_Kalimat_Teranalisis',
+    'Model_AI_Digunakan',
+    'Prediksi_Label',
+    'Kategori_Klasifikasi',
+    'Skor_Keyakinan_Persen',
+    'Probabilitas_Ilegal',
+    'Probabilitas_Legal',
+    'Latensi_Detik',
+    'Indikator_Kata_Kunci'
+  ];
+
+  const rows = allResults.map((r, i) => {
+    const isIll = r.label === 1;
+    const cleanText = (r.text || '').replace(/\r?\n/g, ' ').replace(/"/g, '""');
+    const labelName = isIll ? 'Ilegal / Bermasalah' : 'Legal / Netral';
+    const confPct = ((r.confidence || 0) * 100).toFixed(2) + '%';
+    const probIll = ((r.probabilities?.illegal != null ? r.probabilities.illegal : (isIll ? r.confidence : 1 - r.confidence)) * 100).toFixed(2) + '%';
+    const probLeg = ((r.probabilities?.legal != null ? r.probabilities.legal : (!isIll ? r.confidence : 1 - r.confidence)) * 100).toFixed(2) + '%';
+    const latency = (r.prediction_time_sec || 0).toFixed(4);
+    const keywords = (r.patterns?.illegal_flags || []).concat(r.patterns?.legal_flags || []).join('; ');
+
+    return [
+      i + 1,
+      `"${cleanText}"`,
+      `"${r.model_short || currentActiveModel.toUpperCase()}"`,
+      r.label,
+      `"${labelName}"`,
+      `"${confPct}"`,
+      `"${probIll}"`,
+      `"${probLeg}"`,
+      latency,
+      `"${keywords}"`
+    ].join(',');
+  });
+
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `laporan_deteksi_fintech_${currentActiveModel}_${dateStr}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// ─── Export PDF Laporan Resmi Riset (jsPDF + jsPDF-AutoTable) ───────────────────
+function downloadPDF() {
+  if (!allResults || !allResults.length) {
+    alert('Tidak ada data hasil analisis untuk diekspor ke PDF.');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf || {};
+  if (!jsPDF) {
+    // Fallback bila CDN belum selesai termuat: buka print preview browser
+    window.print();
+    return;
+  }
+
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+  const now = new Date();
+  const dateFormatted = now.toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+  const illegalCount = allResults.filter(r => r.label === 1).length;
+  const legalCount   = allResults.filter(r => r.label === 0).length;
+  const total        = allResults.length;
+  const avgConf      = (allResults.reduce((s, r) => s + r.confidence, 0) / total * 100).toFixed(1);
+  const illegalPct   = ((illegalCount / total) * 100).toFixed(1);
+
+  // 1. Header Banner Biru Navy
+  doc.setFillColor(30, 58, 138); // #1e3a8a
+  doc.rect(0, 0, 842, 65, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(14.5);
+  doc.text('LAPORAN HASIL DETEKSI OTOMATIS FINTECH LENDING ILEGAL', 35, 28);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(226, 232, 240);
+  doc.text(`Penelitian Dosen Pemula (PDP) | Engine: ${currentActiveModel.toUpperCase()} Fine-Tuned | Waktu Ekspor: ${dateFormatted}`, 35, 48);
+
+  // 2. Summary KPI Box
+  doc.setFillColor(248, 250, 252);
+  doc.setDrawColor(203, 213, 225);
+  doc.roundedRect(35, 76, 772, 36, 4, 4, 'FD');
+
+  doc.setFontSize(9.5);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(15, 23, 42);
+  doc.text(`Total Sampel: ${total.toLocaleString()}`, 50, 98);
+
+  doc.setTextColor(220, 38, 38);
+  doc.text(`Ilegal: ${illegalCount.toLocaleString()} (${illegalPct}%)`, 220, 98);
+
+  doc.setTextColor(22, 163, 74);
+  doc.text(`Legal: ${legalCount.toLocaleString()} (${(100 - illegalPct).toFixed(1)}%)`, 410, 98);
+
+  doc.setTextColor(217, 119, 6);
+  doc.text(`Rata-Rata Keyakinan: ${avgConf}%`, 600, 98);
+
+  // 3. Tabel Data Terstruktur
+  const tableData = allResults.map((r, i) => [
+    i + 1,
+    (r.text || '').replace(/\s+/g, ' '),
+    r.model_short || currentActiveModel.toUpperCase(),
+    r.label === 1 ? 'ILEGAL' : 'LEGAL',
+    `${(r.confidence * 100).toFixed(1)}%`,
+    `${(r.prediction_time_sec || 0).toFixed(3)}s`
+  ]);
+
+  doc.autoTable({
+    startY: 122,
+    head: [['No', 'Teks / Ulasan / Postingan Teranalisis', 'Model AI', 'Prediksi', 'Keyakinan', 'Latensi']],
+    body: tableData,
+    theme: 'grid',
+    headStyles: {
+      fillColor: [30, 58, 138],
+      textColor: [255, 255, 255],
+      fontStyle: 'bold',
+      fontSize: 8.5,
+      halign: 'left'
+    },
+    bodyStyles: {
+      fontSize: 8,
+      textColor: [30, 41, 59],
+      cellPadding: 4.5
+    },
+    alternateRowStyles: {
+      fillColor: [248, 250, 252]
+    },
+    columnStyles: {
+      0: { cellWidth: 35, halign: 'center' },
+      1: { cellWidth: 440 },
+      2: { cellWidth: 80, halign: 'center' },
+      3: { cellWidth: 70, halign: 'center', fontStyle: 'bold' },
+      4: { cellWidth: 75, halign: 'right' },
+      5: { cellWidth: 55, halign: 'right' }
+    },
+    didParseCell: function(data) {
+      if (data.section === 'body' && data.column.index === 3) {
+        if (data.cell.raw === 'ILEGAL') {
+          data.cell.styles.textColor = [185, 28, 28];
+          data.cell.styles.fillColor = [254, 226, 226];
+        } else {
+          data.cell.styles.textColor = [22, 101, 52];
+          data.cell.styles.fillColor = [220, 252, 231];
+        }
+      }
+    },
+    margin: { left: 35, right: 35 },
+    didDrawPage: function(data) {
+      const pageCount = doc.internal.getNumberOfPages();
+      doc.setFontSize(7.5);
+      doc.setTextColor(148, 163, 184);
+      doc.text(`Halaman ${data.pageNumber} dari ${pageCount}`, 35, 578);
+      doc.text('Laporan Resmi Sistem Deteksi Fintech Lending Ilegal — IndoBERT NLP Engine', 450, 578);
+    }
+  });
+
+  doc.save(`laporan_deteksi_fintech_${currentActiveModel}_${now.toISOString().slice(0, 10)}.pdf`);
+}
+
+// ─── Reset Analysis ───────────────────────────────────────────────────────────
+function resetAnalysis() {
+  allResults = [];
+  selectedFile = null;
+  document.getElementById('results-section').style.display = 'none';
+  document.getElementById('file-input').value = '';
+  document.getElementById('file-chosen').style.display = 'none';
+  document.getElementById('source-textarea').value = '';
+  document.getElementById('source-char').textContent = '0 karakter terdeteksi';
+  document.getElementById('btn-analyze-doc').disabled = true;
+  document.getElementById('btn-analyze-source').disabled = true;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ─── Initialization ───────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  checkHealth();
+  loadPresets();
+  loadMetricsDatabase();
+});
+</script>
+</body>
+</html>

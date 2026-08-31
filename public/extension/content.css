@@ -1,0 +1,290 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   content.css — Floating UI untuk Scraper Deteksi Fintech Lending Ilegal di Facebook
+   ───────────────────────────────────────────────────────────────────────────── */
+#fintech-floating-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #0f172a;
+}
+
+.fintech-floating-pill {
+  background: #1e3a8a;
+  color: #ffffff;
+  padding: 10px 16px;
+  border-radius: 999px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  border: 2px solid #ffffff;
+  transition: all 0.2s ease;
+}
+
+.fintech-floating-pill:hover {
+  background: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+}
+
+.fintech-panel-card {
+  display: none;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  width: 340px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  margin-bottom: 10px;
+  animation: fintechFadeIn 0.2s ease-out;
+}
+
+@keyframes fintechFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fintech-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  font-weight: 800;
+  color: #1e3a8a;
+}
+
+.fintech-close-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.fintech-btn-primary {
+  width: 100%;
+  padding: 9px 12px;
+  background: #1e3a8a;
+  color: #ffffff;
+  border: none;
+  border-radius: 7px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.fintech-btn-primary:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+.fintech-btn-primary:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.fintech-chips-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.fintech-chip-btn {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.fintech-chip-btn:hover {
+  background: #1e3a8a;
+  color: #ffffff;
+}
+
+.fintech-status-text {
+  font-size: 11px;
+  color: #475569;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 8px 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  min-height: 38px;
+}
+
+.fintech-action-row {
+  display: flex;
+  gap: 6px;
+}
+
+.fintech-btn-sec {
+  flex: 1;
+  padding: 7px 10px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f172a;
+  cursor: pointer;
+  text-align: center;
+}
+
+.fintech-btn-sec:hover:not(:disabled) {
+  background: #f1f5f9;
+  border-color: #1e3a8a;
+  color: #1e3a8a;
+}
+
+.fintech-btn-sec:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LIVE IN-PAGE CRAWL HUD & CARD SCANNER VISUAL EFFECTS
+   ───────────────────────────────────────────────────────────────────────────── */
+#fintech-crawl-hud {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483647;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 12px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45), 0 0 24px rgba(16, 185, 129, 0.35);
+  border: 1.5px solid rgba(16, 185, 129, 0.7);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  min-width: 380px;
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  animation: fintechSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+@keyframes fintechSlideDown {
+  from { opacity: 0; transform: translate(-50%, -24px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+.fintech-hud-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.fintech-hud-title {
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #34d399;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fintech-hud-page-badge {
+  background: #1e3a8a;
+  color: #93c5fd;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  border: 1px solid #3b82f6;
+}
+
+.fintech-hud-detail {
+  font-size: 11.5px;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+}
+
+.fintech-hud-progress-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.fintech-hud-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #10b981, #06b6d4);
+  width: 0%;
+  border-radius: 99px;
+  transition: width 0.25s ease;
+  box-shadow: 0 0 10px #10b981;
+}
+
+/* ── Card Visual Scanning Effects ── */
+.fintech-card-active-scan {
+  outline: 3px solid #10b981 !important;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.5) !important;
+  transform: scale(1.015) !important;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  position: relative !important;
+  z-index: 100 !important;
+}
+
+.fintech-card-scanned-done {
+  outline: 2px solid #34d399 !important;
+  box-shadow: 0 0 12px rgba(52, 211, 153, 0.25) !important;
+  transition: all 0.3s ease !important;
+}
+
+.fintech-live-tag {
+  position: absolute !important;
+  top: 8px !important;
+  right: 8px !important;
+  z-index: 101 !important;
+  font-size: 10.5px !important;
+  font-weight: 800 !important;
+  padding: 3px 9px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25) !important;
+  animation: fintechPulse 1.2s infinite ease-in-out;
+  font-family: system-ui, sans-serif !important;
+}
+
+.fintech-live-tag.scanning {
+  background: #f59e0b !important;
+  color: #ffffff !important;
+}
+
+.fintech-live-tag.done {
+  background: #10b981 !important;
+  color: #ffffff !important;
+  animation: none !important;
+}
+
+@keyframes fintechPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
+}
