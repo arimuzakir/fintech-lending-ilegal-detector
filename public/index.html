@@ -2425,6 +2425,68 @@ async function runDocumentAnalysis() {
   }
 }
 
+// ─── Client-side HTML DOM Extractor (Ultra-Fast C++ Browser Native) ───────────
+function extractClientHTML(rawHtml) {
+  if (!rawHtml || !rawHtml.trim()) return [];
+  
+  const isHtml = rawHtml.includes('<') && (rawHtml.includes('>') || rawHtml.toLowerCase().includes('<!doctype'));
+  if (!isHtml) {
+    return splitTextIntoCleanSentences(rawHtml);
+  }
+
+  try {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(rawHtml, 'text/html');
+
+    // Hapus script, style, SVG, navigasi, footer
+    const junkElements = doc.querySelectorAll('script, style, svg, noscript, iframe, template, canvas, header, footer, nav, head, meta, link');
+    junkElements.forEach(el => el.remove());
+
+    // Target kontainer postingan media sosial & portal berita
+    const targetSelectors = [
+      '#fintech-accumulated-posts div',
+      'div[data-testid="tweetText"]',
+      'div[data-ad-preview="message"]',
+      'div[data-ad-comet-preview="message"]',
+      '.itp_bodycontent p',
+      '.read__content p',
+      '.article__body p',
+      '.entry-content p',
+      '.post-content p',
+      'article p',
+      'p'
+    ];
+
+    const extractedTexts = [];
+    const seenChunks = new Set();
+
+    targetSelectors.forEach(sel => {
+      const elements = doc.querySelectorAll(sel);
+      elements.forEach(el => {
+        const txt = (el.innerText || el.textContent || '').trim();
+        if (txt.length >= 15) {
+          const key = txt.slice(0, 50).toLowerCase().replace(/\W+/g, '');
+          if (key && !seenChunks.has(key)) {
+            seenChunks.add(key);
+            extractedTexts.push(txt);
+          }
+        }
+      });
+    });
+
+    if (extractedTexts.length > 0) {
+      return splitTextIntoCleanSentences(extractedTexts.join('\n\n'));
+    }
+
+    const bodyText = doc.body ? (doc.body.innerText || doc.body.textContent || '') : '';
+    return splitTextIntoCleanSentences(bodyText);
+
+  } catch (err) {
+    const cleanPlain = rawHtml.replace(/<[^>]+>/g, ' ');
+    return splitTextIntoCleanSentences(cleanPlain);
+  }
+}
+
 // ─── Web Scraper & HTML Analysis Flow ─────────────────────────────────────────
 async function runSourceAnalysis() {
   const rawText = document.getElementById('source-textarea').value.trim();
@@ -2436,71 +2498,42 @@ async function runSourceAnalysis() {
   const spinner = document.getElementById('spinner-source');
   btn.disabled = true; btnText.textContent = 'Mengekstrak HTML...'; spinner.style.display = 'block';
 
-  // Fast O(1) sampling to prevent UI thread lock
-  const sample = rawText.slice(0, 500).toLowerCase();
-  const isHtml = sample.includes('<') || sample.includes('<!doctype') || sample.includes('<html');
-  const sizeKb = Math.round(rawText.length / 1024);
-
   showProgress();
   setStep(1);
 
-  if (isHtml) {
-    setProgress(12, 'Mengekstrak Konten dari Salinan HTML...', `Mem-parse ${sizeKb.toLocaleString()} KB struktur DOM & membersihkan skrip...`, `Ukuran HTML: ${sizeKb} KB`);
-  } else {
-    setProgress(12, 'Memfilter Teks Scraped...', 'Memisahkan ulasan/postingan...', `Format: Plain Text (${rawText.length} karakter)`);
-  }
-
-  // Smooth pulse timer while waiting for network response
-  let stepPct = 12;
-  const timer = setInterval(() => {
-    if (stepPct < 22) {
-      stepPct += 2;
-      setProgress(stepPct, isHtml ? 'Mengekstrak Paragraf & Postingan Media Sosial...' : 'Menyiapkan Segmentasi Kalimat...', 'Menghilangkan tag HTML dan elemen navigasi...', '');
-    }
-  }, 200);
+  const sizeKb = Math.round(rawText.length / 1024);
+  setProgress(15, 'Mengekstrak Konten dari Salinan HTML...', `Mem-parse ${sizeKb.toLocaleString()} KB struktur DOM di browser...`, `Ukuran Data: ${sizeKb} KB`);
+  await delay(150);
 
   try {
-    const r1 = await fetch('/api/extract-sentences', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: rawText, model_type: modelType })
-    });
+    // 1. Ekstraksi langsung di browser via C++ DOMParser
+    const extractedSentences = extractClientHTML(rawText);
 
-    clearInterval(timer);
-
-    if (!r1.ok) {
-      const err = await r1.json();
-      throw new Error(err.detail || 'Ekstraksi teks dari HTML gagal');
-    }
-
-    const extracted = await r1.json();
-
-    if (!extracted.sentences || extracted.sentences.length === 0) {
-      throw new Error('Tidak ditemukan teks postingan atau kalimat yang dapat diekstrak dari salinan HTML ini. Pastikan Anda menyalin halaman yang memuat postingan atau ulasan.');
+    if (!extractedSentences || extractedSentences.length === 0) {
+      throw new Error('Tidak ditemukan teks postingan atau ulasan yang dapat diekstrak dari salinan HTML ini. Pastikan Anda menyalin halaman yang memuat postingan.');
     }
 
     setStep(2);
     setProgress(25, 'Ekstraksi & Segmentasi HTML Selesai! ✅',
-      `Berhasil mengekstrak ${extracted.total} sampel ulasan/postingan bersih dari salinan HTML.`,
-      `Total: ${extracted.total} kalimat siap diuji`
+      `Berhasil mengekstrak ${extractedSentences.length} sampel ulasan/postingan bersih dari salinan HTML.`,
+      `Total: ${extractedSentences.length} kalimat siap diuji`
     );
-    await delay(350);
+    await delay(300);
 
     setStep(3);
-    allResults = await batchAnalyzeWithProgress(extracted.sentences, 28, 92, modelType);
+    allResults = await batchAnalyzeWithProgress(extractedSentences, 28, 92, modelType);
 
     setStep(4);
     setProgress(96, 'Menyusun Visualisasi Grafik & Tabel...', 'Menghitung statistik akurasi...', '');
-    await delay(350);
+    await delay(300);
     setProgress(100, 'Analisis Selesai! ✅', `Berhasil mengklasifikasikan ${allResults.length} ulasan dari HTML menggunakan model ${modelType.toUpperCase()}.`, `Total: ${allResults.length} data`);
-    await delay(350);
+    await delay(300);
 
     hideProgress();
     renderBatchResults(allResults, modelType);
     showResults();
 
   } catch (err) {
-    clearInterval(timer);
     alert('Pemberitahuan Analisis: ' + err.message);
     hideProgress();
   } finally {
