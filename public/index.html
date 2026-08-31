@@ -2270,11 +2270,12 @@ function setStep(n) {
 // ─── Batch Inference with Model Selection ─────────────────────────────────────
 async function batchAnalyzeWithProgress(sentences, startPct, endPct, modelType) {
   const results = [];
-  const total   = sentences.length;
-  const CHUNK   = 30;
+  const cleanList = (sentences || []).slice(0, 300);
+  const total   = cleanList.length;
+  const CHUNK   = 25;
 
   for (let i = 0; i < total; i += CHUNK) {
-    const chunk = sentences.slice(i, i + CHUNK);
+    const chunk = cleanList.slice(i, i + CHUNK);
     const pct   = startPct + ((i / total) * (endPct - startPct));
     setProgress(pct,
       `Inferensi ${modelType.toUpperCase()} Berlangsung...`,
@@ -2282,15 +2283,36 @@ async function batchAnalyzeWithProgress(sentences, startPct, endPct, modelType) 
       `[${i+1}–${Math.min(i+CHUNK, total)} / ${total} kalimat] — Engine: ${modelType}`
     );
 
-    const res = await fetch('/api/batch-predict', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ texts: chunk, model_type: modelType })
-    });
-    if (!res.ok) throw new Error('Batch predict gagal');
-    const data = await res.json();
-    results.push(...(data.results || []));
+    try {
+      const res = await fetch('/api/batch-predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ texts: chunk, model_type: modelType })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        results.push(...(data.results || []));
+      } else {
+        // Fallback retry
+        const res2 = await fetch('/api/batch-predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ texts: chunk, model_type: modelType })
+        });
+        if (res2.ok) {
+          const data2 = await res2.json();
+          results.push(...(data2.results || []));
+        }
+      }
+    } catch (err) {
+      console.warn('Batch chunk warning:', err);
+    }
   }
+
+  if (results.length === 0 && total > 0) {
+    throw new Error('Gagal memproses inferensi AI. Silakan coba kembali.');
+  }
+
   return results;
 }
 

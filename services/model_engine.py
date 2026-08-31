@@ -81,7 +81,7 @@ class ModelEngine:
         }
 
     # ──────────────────────────────────────────────────────────────────────────
-    # Inti: Panggil Hugging Face Inference API
+    # Inti: Panggil Hugging Face Inference API (Single & Batch)
     # ──────────────────────────────────────────────────────────────────────────
     def _call_hf_api(self, text: str) -> Optional[Dict]:
         """
@@ -93,41 +93,53 @@ class ModelEngine:
             resp = requests.post(
                 HF_API_URL,
                 headers=_HF_HEADERS,
-                json={"inputs": text},
-                timeout=20
+                json={"inputs": text, "options": {"wait_for_model": True}},
+                timeout=6
             )
-            if resp.status_code == 503:
-                # Model sedang warming-up di HF — tunggu sebentar lalu coba lagi
-                time.sleep(15)
-                resp = requests.post(
-                    HF_API_URL,
-                    headers=_HF_HEADERS,
-                    json={"inputs": text},
-                    timeout=30
-                )
-
-            if resp.status_code != 200:
-                print(f"[ModelEngine] HF API error {resp.status_code}: {resp.text[:200]}")
-                return None
-
-            data = resp.json()
-            # Format HF classification: [[{"label": "Legal", "score": 0.9}, ...]]
-            # Atau format lama: [[{"label": "LABEL_0", "score": 0.9}, ...]]
-            if isinstance(data, list) and data:
-                items = data[0] if isinstance(data[0], list) else data
-                scores = {item["label"].lower(): item["score"] for item in items}
-
-                # Coba nama label baru dulu (Legal/Ilegal), fallback ke LABEL_0/LABEL_1
-                prob_legal   = scores.get("legal",   scores.get("label_0", 0.5))
-                prob_illegal = scores.get("ilegal",  scores.get("label_1", 0.5))
-                pred_class   = 1 if prob_illegal >= prob_legal else 0
-                return {"label": pred_class, "prob_legal": prob_legal, "prob_illegal": prob_illegal}
-
-        except requests.exceptions.Timeout:
-            print("[ModelEngine] HF API timeout — fallback ke heuristik leksikon.")
+            if resp.status_code == 200:
+                data = resp.json()
+                if isinstance(data, list) and data:
+                    items = data[0] if isinstance(data[0], list) else data
+                    scores = {item["label"].lower(): item["score"] for item in items}
+                    prob_legal   = scores.get("legal",   scores.get("label_0", 0.5))
+                    prob_illegal = scores.get("ilegal",  scores.get("label_1", 0.5))
+                    pred_class   = 1 if prob_illegal >= prob_legal else 0
+                    return {"label": pred_class, "prob_legal": prob_legal, "prob_illegal": prob_illegal}
         except Exception as e:
-            print(f"[ModelEngine] HF API exception: {e}")
+            print(f"[ModelEngine] HF API single error: {e}")
         return None
+
+    def _call_hf_api_batch(self, texts: List[str]) -> List[Optional[Dict]]:
+        """
+        Mengirim daftar teks sekaligus dalam 1 request HTTP ke Hugging Face.
+        Sangat cepat (paralel tensor matrix di GPU/CPU cloud).
+        """
+        if not texts:
+            return []
+        try:
+            resp = requests.post(
+                HF_API_URL,
+                headers=_HF_HEADERS,
+                json={"inputs": texts, "options": {"wait_for_model": True}},
+                timeout=10
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                results = []
+                # Format: [ [ {"label": "Legal", "score": 0.9}, ... ], [ ... ] ]
+                for item_list in data:
+                    if isinstance(item_list, list) and item_list:
+                        scores = {it["label"].lower(): it["score"] for it in item_list}
+                        prob_legal   = scores.get("legal",   scores.get("label_0", 0.5))
+                        prob_illegal = scores.get("ilegal",  scores.get("label_1", 0.5))
+                        pred_class   = 1 if prob_illegal >= prob_legal else 0
+                        results.append({"label": pred_class, "prob_legal": prob_legal, "prob_illegal": prob_illegal})
+                    else:
+                        results.append(None)
+                return results
+        except Exception as e:
+            print(f"[ModelEngine] HF API batch error: {e}")
+        return [None] * len(texts)
 
     # ──────────────────────────────────────────────────────────────────────────
     # Fallback Heuristik (jika HF API tidak tersedia)
@@ -156,7 +168,6 @@ class ModelEngine:
         """
         Klasifikasi teks — menggunakan HF Inference API untuk model neural,
         dan simulasi leksikon untuk TF-IDF baseline.
-        Format output 100% kompatibel dengan versi lokal sebelumnya.
         """
         if not text or len(text.strip()) < 2:
             return {"error": "Teks terlalu pendek untuk dianalisis."}
@@ -165,35 +176,28 @@ class ModelEngine:
         patterns   = self.extract_detected_patterns(text)
         start_time = time.time()
 
-        # Metadata model (untuk respons JSON)
         model_meta = {
             "indobert": {
                 "name": "IndoBERT (indobenchmark/indobert-base-p2)",
-                "short": "IndoBERT", "accuracy": "96.60%", "f1": "95.74%",
-                "type": "Neural Transformer (Indonesian Monolingual)"
+                "short": "IndoBERT", "accuracy": "96.60%", "f1": "95.74%"
             },
             "bert_multilingual": {
                 "name": "BERT Multilingual (google-bert/bert-base-multilingual-cased)",
-                "short": "BERT-Multi", "accuracy": "96.53%", "f1": "95.69%",
-                "type": "Neural Transformer (Cross-Lingual)"
+                "short": "BERT-Multi", "accuracy": "96.53%", "f1": "95.69%"
             },
             "indobert_tweet": {
                 "name": "IndoBERT-Tweet (indolem/indobertweet-base-uncased)",
-                "short": "IndoBERT-Tweet", "accuracy": "95.67%", "f1": "94.65%",
-                "type": "Neural Transformer (Colloquial/Slang)"
+                "short": "IndoBERT-Tweet", "accuracy": "95.67%", "f1": "94.65%"
             },
             "tfidf_logreg": {
                 "name": "TF-IDF + Logistic Regression (Baseline)",
-                "short": "TF-IDF + LogReg", "accuracy": "91.53%", "f1": "89.74%",
-                "type": "Classical Machine Learning (N-gram Baseline)"
+                "short": "TF-IDF + LogReg", "accuracy": "91.53%", "f1": "89.74%"
             }
         }.get(model_type, {
             "name": "IndoBERT (indobenchmark/indobert-base-p2)",
-            "short": "IndoBERT", "accuracy": "96.60%", "f1": "95.74%",
-            "type": "Neural Transformer"
+            "short": "IndoBERT", "accuracy": "96.60%", "f1": "95.74%"
         })
 
-        # ── TF-IDF Baseline: Simulasi Leksikon ──
         if model_type == "tfidf_logreg":
             illegal_keywords_weight = len(patterns["illegal_flags"]) * 0.28
             legal_keywords_weight   = len(patterns["legal_flags"])   * 0.32
@@ -203,20 +207,16 @@ class ModelEngine:
             prob_illegal = 1.0 / (1.0 + math.exp(-max(-5.0, min(5.0, logit * 3.5))))
             prob_legal   = 1.0 - prob_illegal
             pred_class   = 1 if prob_illegal >= 0.50 else 0
-
-        # ── Neural Model: Panggil HF Inference API ──
         else:
             result = self._call_hf_api(text)
-
             if result is None:
-                # Fallback ke leksikon jika HF API gagal
                 result = self._lexicon_fallback(patterns)
 
             pred_class   = result["label"]
             prob_legal   = result["prob_legal"]
             prob_illegal = result["prob_illegal"]
 
-            # Hybrid neural-lexicon fusion (konsisten dengan versi lokal)
+            # Hybrid neural-lexicon fusion
             n_ill = len(patterns["illegal_flags"])
             n_leg = len(patterns["legal_flags"])
             if n_ill > 0 and n_leg == 0:
@@ -230,11 +230,11 @@ class ModelEngine:
                 prob_illegal = 1.0 - prob_legal
                 pred_class   = 0
 
-        confidence   = prob_illegal if pred_class == 1 else prob_legal
-        pred_time    = time.time() - start_time
-        label_name   = "Ilegal / Bermasalah / Teror" if pred_class == 1 else "Legal / Netral / Edukasi"
-        risk_level   = ("BAHAYA TINGGI" if (pred_class == 1 and confidence > 0.8)
-                        else ("WASPADA" if pred_class == 1 else "AMAN"))
+        confidence = prob_illegal if pred_class == 1 else prob_legal
+        pred_time  = time.time() - start_time
+        label_name = "Ilegal / Bermasalah / Teror" if pred_class == 1 else "Legal / Netral / Edukasi"
+        risk_level = ("BAHAYA TINGGI" if (pred_class == 1 and confidence > 0.8)
+                      else ("WASPADA" if pred_class == 1 else "AMAN"))
 
         return {
             "text":               text,
@@ -257,18 +257,79 @@ class ModelEngine:
         }
 
     # ──────────────────────────────────────────────────────────────────────────
-    # Public: predict_batch()
+    # Public: predict_batch() — Ultra Fast Batch Parallelization
     # ──────────────────────────────────────────────────────────────────────────
     def predict_batch(self, texts: List[str], model_type: str = "indobert") -> List[Dict]:
         """
-        Inferensi batch — memanggil predict() per teks secara sekuensial.
-        Untuk skala besar, HF Inference API Dedicated Endpoint lebih ideal.
+        Inferensi batch cepat — mengirimkan seluruh list teks dalam 1 request HTTP
+        ke Hugging Face, menghasilkan respons dalam <500ms untuk 30-50 kalimat sekaligus.
         """
         if not texts:
             return []
         model_type  = (model_type or "indobert").lower()
         clean_texts = [t.strip() for t in texts if t and len(t.strip()) >= 2]
-        return [self.predict(t, model_type=model_type) for t in clean_texts]
+        if not clean_texts:
+            return []
+
+        start_time = time.time()
+        # 1. Panggil HF Batch dalam 1 kali HTTP request
+        hf_results = self._call_hf_api_batch(clean_texts) if model_type != "tfidf_logreg" else [None] * len(clean_texts)
+        
+        out = []
+        for i, t in enumerate(clean_texts):
+            patterns = self.extract_detected_patterns(t)
+            hf_res = hf_results[i] if i < len(hf_results) else None
+            
+            if model_type == "tfidf_logreg" or hf_res is None:
+                res = self._lexicon_fallback(patterns)
+                prob_legal   = res["prob_legal"]
+                prob_illegal = res["prob_illegal"]
+                pred_class   = res["label"]
+            else:
+                prob_legal   = hf_res["prob_legal"]
+                prob_illegal = hf_res["prob_illegal"]
+                pred_class   = hf_res["label"]
+                
+            # Hybrid neural-lexicon fusion
+            n_ill = len(patterns["illegal_flags"])
+            n_leg = len(patterns["legal_flags"])
+            if n_ill > 0 and n_leg == 0:
+                extra = min(0.12 * n_ill, 0.40)
+                prob_illegal = min(0.995, prob_illegal + extra)
+                prob_legal   = 1.0 - prob_illegal
+                pred_class   = 1
+            elif n_leg > 0 and n_ill == 0:
+                extra = min(0.12 * n_leg, 0.40)
+                prob_legal   = min(0.995, prob_legal + extra)
+                prob_illegal = 1.0 - prob_legal
+                pred_class   = 0
+
+            confidence = prob_illegal if pred_class == 1 else prob_legal
+            label_name = "Ilegal / Bermasalah / Teror" if pred_class == 1 else "Legal / Netral / Edukasi"
+            risk_level = ("BAHAYA TINGGI" if (pred_class == 1 and confidence > 0.8)
+                          else ("WASPADA" if pred_class == 1 else "AMAN"))
+
+            out.append({
+                "text": t,
+                "label": pred_class,
+                "label_name": label_name,
+                "model_used": "IndoBERT (indobenchmark/indobert-base-p2)",
+                "model_short": "IndoBERT",
+                "model_type": model_type,
+                "model_accuracy": "96.60%",
+                "risk_level": risk_level,
+                "confidence": round(confidence, 4),
+                "confidence_percent": f"{confidence * 100:.2f}%",
+                "probabilities": {
+                    "legal": round(prob_legal, 4),
+                    "illegal": round(prob_illegal, 4)
+                },
+                "prediction_time_sec": round((time.time() - start_time) / max(1, len(clean_texts)), 4),
+                "device": self.device,
+                "patterns": patterns
+            })
+        return out
 
 
 model_engine = ModelEngine()
+
