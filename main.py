@@ -20,7 +20,7 @@ from contextlib import asynccontextmanager
 from typing import List
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, StreamingResponse
+from fastapi.responses import FileResponse, StreamingResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
@@ -109,12 +109,13 @@ SAMPLE_CASES = [
 # ──────────────────────────────────────────────────────────────────────────────
 # ENDPOINTS — ROOT & HEALTH
 # ──────────────────────────────────────────────────────────────────────────────
-@app.get("/")
+@app.get("/", response_class=HTMLResponse)
 async def serve_index():
     index_file = os.path.join(static_dir, "index.html")
     if os.path.exists(index_file):
-        return FileResponse(index_file)
-    return {"message": "Aplikasi Deteksi Fintech Lending Ilegal Online", "docs": "/docs"}
+        with open(index_file, "r", encoding="utf-8") as f:
+            return HTMLResponse(content=f.read())
+    return HTMLResponse(content="<h2>Aplikasi Deteksi Fintech Lending Ilegal Online</h2><p>Dokumentasi API: <a href='/docs'>/docs</a></p>")
 
 @app.get("/api/health")
 async def health_check():
