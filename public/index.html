@@ -2533,10 +2533,25 @@ function extractClientHTML(rawHtml) {
 
     // Target kontainer postingan media sosial & portal berita (urutan prioritas tinggi → rendah)
     const targetSelectors = [
+      // 1. Akumulator Ekstensi Chrome (Hasil Auto-Scroll X/FB/Berita)
+      '#fintech-accumulated-posts .fintech-saved-news',
+      '#fintech-accumulated-posts div',
+      '#fintech-accumulated-posts article',
+      '#fintech-accumulated-posts',
+      // 2. Twitter / 𝕏 Live & Salinan Mentah
       'div[data-testid="tweetText"]',
+      'article[data-testid="tweet"] div[lang]',
+      'article[data-testid="tweet"] div[dir="auto"]',
+      'div[data-testid="cellInnerDiv"] div[dir="auto"]',
+      'article[data-testid="tweet"]',
+      // 3. Facebook Posts, Comments & Feeds
       'div[data-ad-preview="message"]',
       'div[data-ad-comet-preview="message"]',
-      '#fintech-accumulated-posts',
+      'div[role="feed"] div[dir="auto"]',
+      'div[role="article"] div[dir="auto"]',
+      'div[data-pagelet*="FeedUnit"] div[dir="auto"]',
+      'div[data-pagelet*="FeedUnit"]',
+      // 4. Portal Berita (MediaKonsumen, Detik, Kompas, Google News)
       '.itp_bodycontent p', '.read__content p', '.article__body p',
       '.detail-text p', '.article-content p', '.content p',
       '.entry-content p', '.post-content p', '.post-body p',
