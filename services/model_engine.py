@@ -21,10 +21,10 @@ HF_API_URL         = f"https://api-inference.huggingface.co/models/{HF_MODEL_REP
 HF_TOKEN           = os.environ.get("HF_TOKEN", "")
 _HF_HEADERS        = {"Authorization": f"Bearer {HF_TOKEN}"} if HF_TOKEN else {}
 
-# Label mapping: LABEL_0 = Legal, LABEL_1 = Ilegal (sesuai urutan id2label di config.json)
+# Label mapping — mendukung nama label lama (LABEL_0/1) dan baru (Legal/Ilegal)
 _LABEL_MAP = {
-    "LABEL_0": 0,  # Legal / Netral / Edukasi
-    "LABEL_1": 1,  # Ilegal / Bermasalah / Teror
+    "LABEL_0": 0, "legal": 0,   # Legal / Netral
+    "LABEL_1": 1, "ilegal": 1,  # Ilegal / Bermasalah
 }
 
 
@@ -111,13 +111,15 @@ class ModelEngine:
                 return None
 
             data = resp.json()
-            # Format HF classification: [[{"label": "LABEL_0", "score": 0.9}, ...]]
-            # Atau: [{"label": "LABEL_0", "score": 0.9}, ...]
+            # Format HF classification: [[{"label": "Legal", "score": 0.9}, ...]]
+            # Atau format lama: [[{"label": "LABEL_0", "score": 0.9}, ...]]
             if isinstance(data, list) and data:
                 items = data[0] if isinstance(data[0], list) else data
-                scores = {item["label"]: item["score"] for item in items}
-                prob_legal   = scores.get("LABEL_0", 0.5)
-                prob_illegal = scores.get("LABEL_1", 0.5)
+                scores = {item["label"].lower(): item["score"] for item in items}
+
+                # Coba nama label baru dulu (Legal/Ilegal), fallback ke LABEL_0/LABEL_1
+                prob_legal   = scores.get("legal",   scores.get("label_0", 0.5))
+                prob_illegal = scores.get("ilegal",  scores.get("label_1", 0.5))
                 pred_class   = 1 if prob_illegal >= prob_legal else 0
                 return {"label": pred_class, "prob_legal": prob_legal, "prob_illegal": prob_illegal}
 
