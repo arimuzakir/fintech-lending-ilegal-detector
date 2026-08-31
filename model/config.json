@@ -1,6 +1,4 @@
 {
-  "_num_labels": 5,
-  "add_cross_attention": false,
   "architectures": [
     "BertForSequenceClassification"
   ],
@@ -11,10 +9,18 @@
   "directionality": "bidi",
   "dtype": "float32",
   "eos_token_id": null,
-  "finetuning_task": null,
+  "finetuning_task": "text-classification",
   "hidden_act": "gelu",
   "hidden_dropout_prob": 0.1,
   "hidden_size": 768,
+  "id2label": {
+    "0": "Legal",
+    "1": "Ilegal"
+  },
+  "label2id": {
+    "Legal": 0,
+    "Ilegal": 1
+  },
   "initializer_range": 0.02,
   "intermediate_size": 3072,
   "is_decoder": false,
@@ -23,6 +29,7 @@
   "model_type": "bert",
   "num_attention_heads": 12,
   "num_hidden_layers": 12,
+  "num_labels": 2,
   "output_past": true,
   "pad_token_id": 0,
   "pooler_fc_size": 768,
