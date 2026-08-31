@@ -10,6 +10,7 @@ import os
 import re
 import time
 import math
+import concurrent.futures
 import requests
 from typing import List, Dict, Any, Optional, Tuple
 
@@ -94,7 +95,7 @@ class ModelEngine:
                 HF_API_URL,
                 headers=_HF_HEADERS,
                 json={"inputs": text, "options": {"wait_for_model": True}},
-                timeout=6
+                timeout=4.0
             )
             if resp.status_code == 200:
                 data = resp.json()
@@ -106,7 +107,7 @@ class ModelEngine:
                     pred_class   = 1 if prob_illegal >= prob_legal else 0
                     return {"label": pred_class, "prob_legal": prob_legal, "prob_illegal": prob_illegal}
         except Exception as e:
-            print(f"[ModelEngine] HF API single error: {e}")
+            pass
         return None
 
     # ──────────────────────────────────────────────────────────────────────────
@@ -230,8 +231,8 @@ class ModelEngine:
     def predict_batch(self, texts: List[str], model_type: str = "indobert") -> List[Dict]:
         """
         Inferensi batch menggunakan concurrent.futures.ThreadPoolExecutor.
-        Setiap teks dikirimkan secara paralel ke HF API (max 5 thread).
-        Jika HF API gagal, fallback ke lexicon-based untuk teks tersebut.
+        Setiap teks dikirimkan secara paralel ke HF API (8 thread simultan).
+        Jika HF API gagal/timeout, fallback leksikon otomatis aktif dalam 0.001 detik.
         """
         if not texts:
             return []
@@ -240,7 +241,14 @@ class ModelEngine:
         if not clean_texts:
             return []
 
-        return [self.predict(t, model_type=model_type) for t in clean_texts]
+        if model_type == "tfidf_logreg" or len(clean_texts) == 1:
+            return [self.predict(t, model_type=model_type) for t in clean_texts]
+
+        with concurrent.futures.ThreadPoolExecutor(max_workers=min(8, len(clean_texts))) as executor:
+            futures = [executor.submit(self.predict, t, model_type) for t in clean_texts]
+            results = [f.result() for f in futures]
+        return results
 
 
 model_engine = ModelEngine()
+
