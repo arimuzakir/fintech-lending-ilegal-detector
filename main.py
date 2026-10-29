@@ -280,6 +280,7 @@ async def predict_single(req: TextRequest):
         raise HTTPException(status_code=500, detail=f"Gagal inferensi: {str(e)}")
 
 @app.post("/api/batch-predict")
+@app.post("/batch-predict")
 @app.post("/api/predict-batch")
 @app.post("/predict-batch")
 async def predict_batch(req: BatchTextRequest):
@@ -395,6 +396,7 @@ class LiveScrapeRequest(BaseModel):
 
 
 @app.post("/api/scrape-live")
+@app.post("/scrape-live")
 async def api_scrape_live(req: LiveScrapeRequest):
     """
     Scrape real-time data dari Facebook, X/Twitter (dengan cookies terotentikasi),
